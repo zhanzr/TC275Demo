@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<hightec_project_settings eclipse_build_date="2014.02">
+  <project_build_properties>
+    <pre_post_build_streps>
+      <pre_build_step/>
+      <post_build_step>
+        <build_step active="true" command="&quot;${activeToolchain}/bin/${archToolPref}-objcopy&quot; -O ihex ${BuildArtifactFileBaseName}.elf ${BuildArtifactFileBaseName}.hex" description="" errRedirection="" errRedirectionAppend="false" errRedirectionEnabled="false" name="Generate hex" outRedirection="" outRedirectionAppend="false" outRedirectionEnabled="false" position="0"/>
+      </post_build_step>
+    </pre_post_build_streps>
+  </project_build_properties>
+</hightec_project_settings>

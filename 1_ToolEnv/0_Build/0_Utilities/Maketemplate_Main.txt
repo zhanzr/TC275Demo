@@ -1,0 +1,113 @@
+###############################################################################
+#                                                                             #
+#        Copyright © 2011 Infineon Technologies AG. All rights reserved.      #
+#                                                                             #
+#                                                                             #
+#                              IMPORTANT NOTICE                               #
+#                                                                             #
+#                                                                             #
+# Infineon Technologies AG (Infineon) is supplying this file for use          #
+# exclusively with Infineon’s microcontroller products. This file can be      #
+# freely distributed within development tools that are supporting such        #
+# microcontroller products.                                                   #
+#                                                                             #
+# THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED #
+# OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF          #
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.#
+# INFINEON SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL,#
+# OR CONSEQUENTIAL DAMAGES, FOR	ANY REASON WHATSOEVER.                        #
+#                                                                             #
+###############################################################################
+# Subdir make file for __sub_directory__
+# This is for core type __core_type__ and __toolchain__ compiler !!!!
+###############################################################################
+
+GENERATE_SEC_EXE= Yes									__This_is_line_for_0_Src_Only____This_is_for_SecTyp_only__
+														__This_is_line_for_0_Src_Only____This_is_for_SecTyp_only__
+__include_toolchain_cfg__								__This_is_line_for_0_Src_Only__
+__include_toolchainsec_cfg__							__This_is_line_for_0_Src_Only____This_is_for_SecTyp_only__
+include 1_ToolEnv/0_Build/1_Config/ConfigPrj.mk			__This_is_line_for_0_Src_Only__
+														__This_is_line_for_0_Src_Only__
+														__This_is_line_for_0_Src_Only__
+PROJ_C_INCLUDES:= __proj_c_includes__					__This_is_line_for_0_Src_Only__
+PROJ_ASM_INCLUDES:= __proj_asm_includes__				__This_is_line_for_0_Src_Only__
+
+__include_make_files__
+
+# current directory relative to project
+L_DIR:=__sub_directory__								
+														__This_is_line_for_c_files__
+OBJ_FILES___core_type__+=__o_fm_c_files__				__This_is_line_for_c_files__
+DEP_FILES___core_type__+=__dep_fm_c_files__				__This_is_line_for_c_files__
+														__This_is_line_for_c_files__
+$(OUT_DIR)/__sub_directory__/%.o: __sub_directory__/%.c	__This_is_line_for_c_files__
+	@mkdir -p $(@D)										__This_is_line_for_c_files__
+	@rm -f $(ELF_BIN_MAIN) $(HEX_BIN_MAIN) $(MAP_FILE_MAIN) (LIB_OBJ_MAIN)	__This_is_line_for_c_files__				
+	@echo 'Compiling $<'								__This_is_line_for_c_files__
+	$(CC) $(CC_OPTS) $< -o $(@D)/$*.src	--dep-file=$(@D)/$*.dep	__This_is_line_for_c_files____Tasking_cmd__
+	$(AS) $(ASM_OPTS) $(@D)/$*.src -o $@				__This_is_line_for_c_files____Tasking_cmd__
+	@echo Tasking dependency files converted to GNU format $<	__This_is_line_for_c_files____Tasking_cmd__
+	@sed $(call TaskingDepConversionString,$(@F),$(@D)) $(@:.o=.dep) >$(@:.o=.d) __This_is_line_for_c_files____Tasking_cmd__
+	@rm -f $(@:.o=.dep)									__This_is_line_for_c_files____Tasking_cmd__
+	$(CC) $(CC_OPTS) -c $< -o $@ -save-temps=obj -MMD	__This_is_line_for_c_files____Gnuc_cmd__
+	$(CC) $(CC_OPTS) -c $< -o $@ -Xmake-dependency=4 -Xmake-dependency-savefile=$(@D)/$*.d __This_is_line_for_c_files____Dcc_cmd__
+	@echo ' '											__This_is_line_for_c_files__
+														__This_is_line_for_c_files__
+														__This_is_line_for_asm_files__
+OBJ_FILES___core_type__+=__o_fm_s_files__				__This_is_line_for_asm_files__
+DEP_FILES___core_type__+=__dep_fm_s_files__				__This_is_line_for_asm_files__
+														__This_is_line_for_asm_files__
+$(OUT_DIR)/__sub_directory__/%.o: __sub_directory__/%.asm __This_is_line_for_asm_files____Tasking_cmd__
+$(OUT_DIR)/__sub_directory__/%.o: __sub_directory__/%.s	__This_is_line_for_asm_files____Gnuc_cmd__
+$(OUT_DIR)/__sub_directory__/%.o: __sub_directory__/%.s	__This_is_line_for_asm_files____Dcc_cmd__
+	@mkdir -p $(@D)										__This_is_line_for_asm_files__
+	@rm -f $(ELF_BIN_MAIN) $(HEX_BIN_MAIN) $(MAP_FILE_MAIN)	(LIB_OBJ_MAIN) __This_is_line_for_asm_files__
+	@echo 'Assembling $<'								__This_is_line_for_asm_files__
+	$(AS)  $< $(ASM_OPTS) -o $@	--dep-file=$(@D)/$*.dep	__This_is_line_for_asm_files____Tasking_cmd__
+	@sed $(call TaskingDepConversionString,$(@F),$(@D)) $(@:.o=.dep) >$(@:.o=.d) __This_is_line_for_asm_files____Tasking_cmd__
+	@rm -f $(@:.o=.dep)									__This_is_line_for_asm_files____Tasking_cmd__
+	$(CC) $(ASM_OPTS) $< -o $@ __This_is_line_for_asm_files____Gnuc_cmd__
+	$(CC) $(ASM_OPTS) $< -o $@ -Xmake-dependency=4 -Xmake-dependency-savefile=$(@D)/$*.d 	__This_is_line_for_asm_files____Dcc_cmd__
+	@echo ' '											__This_is_line_for_asm_files__
+														__This_is_line_for_asm_files__
+																									__This_is_line_for_0_Src_Only__
+PROJ_OBJS_MAIN:= __proj_objs_main__																	__This_is_line_for_0_Src_Only__
+PROJ_OBJS_SECOND:= __proj_objs_second__																__This_is_line_for_0_Src_Only____This_is_for_SecTyp_only__
+																									__This_is_line_for_0_Src_Only__
+.PHONY: All_Targets																					__This_is_line_for_0_Src_Only__
+																									__This_is_line_for_0_Src_Only__
+ExeTargets:$(ELF_BIN_MAIN) $(HEX_BIN_MAIN) $(ELF_BIN_SECOND) $(HEX_BIN_SECOND)						__This_is_line_for_0_Src_Only__
+	@echo '...Done'																					__This_is_line_for_0_Src_Only__
+																									__This_is_line_for_0_Src_Only__
+$(ELF_BIN_MAIN) $(HEX_BIN_MAIN):$(OBJ_FILES_SPECIAL) $(OBJ_FILES_MAIN) $(PROJ_OBJS_MAIN) $(LSL_MAIN_FILE) __This_is_line_for_0_Src_Only__
+	@echo 'Building target: $@'																		__This_is_line_for_0_Src_Only__
+	$(LD) $(OBJ_FILES_MAIN) $(OBJ_FILES_SPECIAL) $(PROJ_OBJS_MAIN) $(LD_OPTS) -L$(LIB_DIR)	__This_is_line_for_0_Src_Only____Tasking_cmd__
+	$(LD) $(LD_OPTS) $(LIB_DIR) $(OBJ_FILES_MAIN) $(OBJ_FILES_SPECIAL) $(PROJ_OBJS_MAIN) $(LIBS) -o $(ELF_BIN_MAIN) __This_is_line_for_0_Src_Only____Gnuc_cmd__	
+	$(LD) $(LD_OPTS) -o $(ELF_BIN_MAIN) $(LIB_DIR) $(OBJ_FILES_MAIN) $(OBJ_FILES_SPECIAL) $(PROJ_OBJS_MAIN) $(LIBS)__This_is_line_for_0_Src_Only____Dcc_cmd__	
+	$(HX) $(ELF_BIN_MAIN) -O ihex $(HEX_BIN_MAIN)									__This_is_line_for_0_Src_Only____Gnuc_cmd__
+	$(DD) -R -o $(HEX_BIN_MAIN) $(ELF_BIN_MAIN)														__This_is_line_for_0_Src_Only____Dcc_cmd__
+	@echo ' '																						__This_is_line_for_0_Src_Only__																							
+																									__This_is_line_for_0_Src_Only__
+$(ELF_BIN_SECOND) $(HEX_BIN_SECOND):$(OBJ_FILES_SECOND) $(PROJ_OBJS_SECOND) $(LSL_SECOND_FILE) 		__This_is_line_for_0_Src_Only____This_is_for_SecTyp_only__
+	@echo 'Building target: $@'																		__This_is_line_for_0_Src_Only____This_is_for_SecTyp_only__
+	$(LD_S) $(LD_OPTS_S) -o $(ELF_BIN_SECOND) $(LIB_DIR_S) $(OBJ_FILES_SECOND) $(PROJ_OBJS_SECOND) $(LIBS_S)__This_is_line_for_0_Src_Only____ToolChain_SecCore_cmd____This_is_for_SecTyp_only__	
+	$(HX_S) $(ELF_BIN_SECOND) -O ihex $(HEX_BIN_SECOND) --gap-fill 0x0								__This_is_line_for_0_Src_Only____ToolChain_SecCore_cmd____This_is_for_SecTyp_only__
+	@echo ' '																						__This_is_line_for_0_Src_Only____This_is_for_SecTyp_only__
+																									__This_is_line_for_0_Src_Only____This_is_for_SecTyp_only__
+Archive: $(LIB_OBJ_MAIN) $(LIB_OBJ_SECOND)															__This_is_line_for_0_Src_Only__
+																									__This_is_line_for_0_Src_Only__
+$(LIB_OBJ_MAIN): $(OBJ_FILES_SPECIAL) $(OBJ_FILES_MAIN) $(PROJ_OBJS_MAIN)				__This_is_line_for_0_Src_Only__
+	@echo 'Building library: $@'														__This_is_line_for_0_Src_Only__
+	$(AR) rcs $@ $(OBJ_FILES_SPECIAL) $(OBJ_FILES_MAIN) $(PROJ_OBJS_MAIN)				__This_is_line_for_0_Src_Only____Gnuc_cmd__
+	$(AR) -rc $@ $(OBJ_FILES_SPECIAL) $(OBJ_FILES_MAIN) $(PROJ_OBJS_MAIN)				__This_is_line_for_0_Src_Only____Tasking_cmd__
+	$(AR) -rc $@ $(OBJ_FILES_SPECIAL) $(OBJ_FILES_MAIN) $(PROJ_OBJS_MAIN)				__This_is_line_for_0_Src_Only____Dcc_cmd__
+																						__This_is_line_for_0_Src_Only____This_is_for_SecTyp_only__
+$(LIB_OBJ_SECOND): $(OBJ_FILES_SECOND) $(PROJ_OBJS_SECOND)								__This_is_line_for_0_Src_Only____This_is_for_SecTyp_only__
+	@echo 'Building library: $@'														__This_is_line_for_0_Src_Only____This_is_for_SecTyp_only__
+	$(AR_S) qcs $@ $(OBJ_FILES_SECOND) $(PROJ_OBJS_SECOND)								__This_is_line_for_0_Src_Only____ToolChain_SecCore_cmd____This_is_for_SecTyp_only__
+
+
+-include $(DEP_FILES_MAIN)																			__This_is_line_for_0_Src_Only__
+-include $(DEP_FILES_SPECIAL)																		__This_is_line_for_0_Src_Only__
+-include $(DEP_FILES_SECOND)																		__This_is_line_for_0_Src_Only____This_is_for_SecTyp_only__
+

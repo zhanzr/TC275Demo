@@ -1,0 +1,51 @@
+###############################################################################
+#                                                                             #
+#        Copyright © 2011 Infineon Technologies AG. All rights reserved.      #
+#                                                                             #
+#                                                                             #
+#                              IMPORTANT NOTICE                               #
+#                                                                             #
+#                                                                             #
+# Infineon Technologies AG (Infineon) is supplying this file for use          #
+# exclusively with Infineon’s microcontroller products. This file can be      #
+# freely distributed within development tools that are supporting such        #
+# microcontroller products.                                                   #
+#                                                                             #
+# THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED #
+# OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF          #
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.#
+# INFINEON SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL,#
+# OR CONSEQUENTIAL DAMAGES, FOR	ANY REASON WHATSOEVER.                        #
+#                                                                             #
+###############################################################################
+# Subdir make file for __sub_directory__
+# This is for core type __core_type__ and __toolchain__ compiler !!!!
+###############################################################################
+
+__include_toolchain_cfg__
+
+__include_make_files__
+
+# current directory relative to project
+L_DIR:= __sub_directory__								
+														__This_is_line_for_asm_files__
+# asm file names in the current directory:				__This_is_line_for_asm_files__
+#__asmfiles__											__This_is_line_for_asm_files__
+													 	__This_is_line_for_asm_files__
+OBJ_FILES___core_type__+=__o_fm_s_files__				__This_is_line_for_asm_files__
+DEP_FILES___core_type__+=__dep_fm_s_files__				__This_is_line_for_asm_files__
+														__This_is_line_for_asm_files__
+$(OUT_DIR)/__sub_directory__/%.o: __sub_directory__/%.asm	__This_is_line_for_asm_files__
+	@mkdir -p $(@D)										__This_is_line_for_asm_files__
+	@echo 'Building file: $<'							__This_is_line_for_asm_files__
+	@echo 'Invoking: MCS Assembler'						__This_is_line_for_asm_files__
+	$(GTMASM) $< $(@D)/$*.c >$(@D)/asm.out				__This_is_line_for_asm_files__
+	$(CC) $(CC_OPTS) $(@D)/$*.c -o $(@D)/$*.src	--dep-file=$(@D)/$*.dep	__This_is_line_for_asm_files____Tasking_cmd__
+	$(AS) $(ASM_OPTS) $(@D)/$*.src -o $@				__This_is_line_for_asm_files____Tasking_cmd__
+	@sed $(call TaskingDepConversionString,$(@F),$(@D)) $(@:.o=.dep) >$(@:.o=.d) __This_is_line_for_asm_files____Tasking_cmd__
+	@rm -f $(@:.o=.dep)									__This_is_line_for_asm_files____Tasking_cmd__
+	$(CC) $(CC_OPTS) -c $(@D)/$*.c -o $@ -MMD	__This_is_line_for_asm_files____Gnuc_cmd__
+	$(CC) $(CC_OPTS) -c $(@D)/$*.c -o $@ -Xmake-dependency=4 -Xmake-dependency-savefile=$(@D)/$*.d __This_is_line_for_asm_files____Dcc_cmd__
+	@echo 'Finished building: $<'						__This_is_line_for_asm_files__
+	@echo ' '											__This_is_line_for_asm_files__	
+														__This_is_line_for_asm_files__
