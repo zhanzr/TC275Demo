@@ -1,6 +1,14 @@
 #pragma GCC optimize "-O0" /* Disable optimisation for debugging */
 
+#include <stdio.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
 #include <stdint.h>
+#include <stdbool.h>
+#include <errno.h>
+#include <machine/cint.h>
 
 #include "Cpu\Std\Ifx_Types.h"
 #include "Cpu\Std\IfxCpu_Intrinsics.h"
@@ -12,7 +20,7 @@
 
 /* Simple timing loop */
 uint32 volatile DelayLoopCounter;
-#define TEST_DELAY	100000U
+#define TEST_DELAY_MS	2000U
 
 /* Image of a port pin state */
 uint8 Port10_1_State;
@@ -82,7 +90,6 @@ uint32 schd_GetTick(void)
 	return system_tick;
 }
 
-//inline
 void schd_SetTick(uint32 tick)
 {
 	system_tick = tick;
@@ -133,7 +140,6 @@ int core0_main (void)
 
 //	IfxAsclin_Asc_read(&asc, rxData, &count, TIME_INFINITE);
 
-//    __enable ();
     /*
      * !!WATCHDOG0 AND SAFETY WATCHDOG ARE DISABLED HERE!!
      * Enable the watchdog in the demo if it is required and also service the watchdog periodically
@@ -190,10 +196,11 @@ int core0_main (void)
     	IfxPort_setPinState(&MODULE_P33, 0u, IfxPort_State_high);
 
     	Ifx_SizeT tmpSize16 = 5;
-    	IfxAsclin_Asc_write(&asc, "tes1\n", &tmpSize16, TIME_INFINITE);
+    	IfxAsclin_Asc_write(&asc, "tes2\n", &tmpSize16, TIME_INFINITE);
 
     	/* test delay */
-    	for(DelayLoopCounter = 0x0u; DelayLoopCounter < TEST_DELAY ; DelayLoopCounter++)
+    	tmpTick = schd_GetTick();
+    	while((tmpTick+TEST_DELAY_MS) > schd_GetTick())
     	{
     		_nop();
     	}
@@ -207,10 +214,11 @@ int core0_main (void)
     	IfxPort_setPinState(&MODULE_P33, 0u, IfxPort_State_low);
 
     	tmpSize16 = 5;
-    	IfxAsclin_Asc_write(&asc, "tes0\n", &tmpSize16, TIME_INFINITE);
+    	IfxAsclin_Asc_write(&asc, "tes3\n", &tmpSize16, TIME_INFINITE);
 
     	/* test delay */
-    	for(DelayLoopCounter = 0x0u; DelayLoopCounter < TEST_DELAY ; DelayLoopCounter++)
+    	tmpTick = schd_GetTick();
+    	while((tmpTick+TEST_DELAY_MS) > schd_GetTick())
     	{
     		_nop();
     	}
