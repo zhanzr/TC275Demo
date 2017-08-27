@@ -140,17 +140,20 @@ int core0_main (void)
 	/* pin configuration */
 	const IfxAsclin_Asc_Pins pins = {
 	NULL, IfxPort_InputMode_pullUp, /* CTS pin not used */
-	&IfxAsclin0_RXB_P15_3_IN, IfxPort_InputMode_pullUp, /* Rx pin */
+	&IfxAsclin0_RXA_P14_1_IN, IfxPort_InputMode_pullUp, /* Rx pin */
 	NULL, IfxPort_OutputMode_pushPull, /* RTS pin not used */
-	&IfxAsclin0_TX_P15_2_OUT, IfxPort_OutputMode_pushPull, /* Tx pin */
+//	&IfxAsclin0_TX_P15_2_OUT, IfxPort_OutputMode_pushPull, /* Tx pin */
+	&IfxAsclin0_TX_P15_3_OUT, IfxPort_OutputMode_pushPull, /* Tx pin */
 	IfxPort_PadDriver_cmosAutomotiveSpeed1
 	};
 	ascConfig.pins = &pins;
 	/* Manually set pad driver to speed grade 1 */
 	/*(otherwise 3v3 is not seen as a '1' ) */
+//	IfxPort_setPinPadDriver(&MODULE_P15,2,
 	IfxPort_setPinPadDriver(&MODULE_P15,3,
 	IfxPort_PadDriver_cmosAutomotiveSpeed1) ;
-	IfxPort_setPinPadDriver(&MODULE_P15,2,
+
+	IfxPort_setPinPadDriver(&MODULE_P14,1,
 	IfxPort_PadDriver_cmosAutomotiveSpeed1) ;
 
 	IfxAsclin_Asc_initModule(&asc, &ascConfig);
