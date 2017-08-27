@@ -4,7 +4,7 @@
 #define SuspendInt()	IfxCpu_disableInterrupts()
 #define ResumeInt()		IfxCpu_enableInterrupts()
 
-#include "Appli/back/schd_tim.h"
+//#include "Appli/back/schd_tim.h"
 //#include "Appli/back/back_uart.h"
 
 #include "../Appli/PORT/PortDemoEntry.h"
