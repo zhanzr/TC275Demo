@@ -48,6 +48,7 @@
 							<tool id="com.rt.hightec.buildsystem.tricore.new.compiler.c.499242790" name="TriCore C Compiler" superClass="com.rt.hightec.buildsystem.tricore.new.compiler.c">
 								<option id="com.rt.hightec.framework.buildsystem.abstract.hightec.tool.compiler.symbols.defined.1821098375" name="Defined symbols (-D)" superClass="com.rt.hightec.framework.buildsystem.abstract.hightec.tool.compiler.symbols.defined" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="TRIBOARD_TC275C"/>
+									<listOptionValue builtIn="false" value="__TC161__"/>
 									<listOptionValue builtIn="false" value="__TC16__"/>
 									<listOptionValue builtIn="false" value="IFX_USE_SW_MANAGED_INT"/>
 									<listOptionValue builtIn="false" value="__GNUC__=4"/>

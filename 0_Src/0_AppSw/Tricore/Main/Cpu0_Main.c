@@ -31,6 +31,10 @@ static uint8 ascTxBuffer[ASC_TX_BUFFER_SIZE+ sizeof(Ifx_Fifo) + 8];
 #define ASC_RX_BUFFER_SIZE 512
 static uint8 ascRxBuffer[ASC_RX_BUFFER_SIZE+ sizeof(Ifx_Fifo) + 8];
 
+extern unsigned long SYSTEM_GetCpuClock(void);
+extern unsigned long SYSTEM_GetSysClock(void);
+extern unsigned long SYSTEM_GetStmClock(void);
+
 #define IFX_INTPRIO_ASCLIN0_TX 1
 #define IFX_INTPRIO_ASCLIN0_RX 2
 #define IFX_INTPRIO_ASCLIN0_ER 3
@@ -95,6 +99,21 @@ void schd_SetTick(uint32 tick)
 	system_tick = tick;
 }
 
+size_t read(int fd, void *buffer, size_t count)
+{
+	Ifx_SizeT tmpCnt = count;
+
+	IfxAsclin_Asc_read(&asc, buffer, &tmpCnt, TIME_INFINITE);
+	return count;
+}
+
+size_t write(int fd, const void *buffer, size_t count)
+{
+	Ifx_SizeT tmpCnt = count;
+
+	IfxAsclin_Asc_write(&asc, buffer, &tmpCnt, TIME_INFINITE);
+}
+
 /* Main Program */
 int core0_main (void)
 {
@@ -137,8 +156,6 @@ int core0_main (void)
 	IfxAsclin_Asc_initModule(&asc, &ascConfig);
 
 	schd_init();
-
-//	IfxAsclin_Asc_read(&asc, rxData, &count, TIME_INFINITE);
 
     /*
      * !!WATCHDOG0 AND SAFETY WATCHDOG ARE DISABLED HERE!!
@@ -195,9 +212,13 @@ int core0_main (void)
     	/* Click speaker */
     	IfxPort_setPinState(&MODULE_P33, 0u, IfxPort_State_high);
 
-    	Ifx_SizeT tmpSize16 = 5;
-    	IfxAsclin_Asc_write(&asc, "tes2\n", &tmpSize16, TIME_INFINITE);
-
+    	printf("Cpu:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
+    			SYSTEM_GetCpuClock(),
+				SYSTEM_GetSysClock(),
+				SYSTEM_GetStmClock(),
+				__TRICORE_CORE__,
+				schd_GetTick()
+    	);
     	/* test delay */
     	tmpTick = schd_GetTick();
     	while((tmpTick+TEST_DELAY_MS) > schd_GetTick())
@@ -212,9 +233,6 @@ int core0_main (void)
     	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_low);
     	/* Click speaker */
     	IfxPort_setPinState(&MODULE_P33, 0u, IfxPort_State_low);
-
-    	tmpSize16 = 5;
-    	IfxAsclin_Asc_write(&asc, "tes3\n", &tmpSize16, TIME_INFINITE);
 
     	/* test delay */
     	tmpTick = schd_GetTick();
