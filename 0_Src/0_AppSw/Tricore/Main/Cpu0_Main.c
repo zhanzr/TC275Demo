@@ -1,4 +1,5 @@
-#pragma GCC optimize "-O0" /* Disable optimisation for debugging */
+//TODO: Disable optimisation for debugging, it is necessary, don't know why now
+#pragma GCC optimize "-O0"
 
 #include <stdio.h>
 #include <stddef.h>
@@ -10,34 +11,34 @@
 #include <errno.h>
 #include <machine/cint.h>
 
-#include "Cpu\Std\Ifx_Types.h"
-#include "Cpu\Std\IfxCpu_Intrinsics.h"
-#include "Scu\Std\IfxScuWdt.h"
-#include "main.h"
-#include "Port\Std\IfxPort.h"
+#include "Cpu/Std/Ifx_Types.h"
+#include "Cpu/Std/IfxCpu_Intrinsics.h"
+#include "Scu/Std/IfxScuWdt.h"
+#include "Port/Std/IfxPort.h"
 #include <Asclin/Asc/IfxAsclin_Asc.h>
 #include <Stm/Std/IfxStm.h>
 
-/* Simple timing loop */
-uint32 volatile DelayLoopCounter;
-#define TEST_DELAY_MS	2000U
+#include "main.h"
+
+#define IFX_INTPRIO_ASCLIN0_TX 1
+#define IFX_INTPRIO_ASCLIN0_RX 2
+#define IFX_INTPRIO_ASCLIN0_ER 3
 
 /* Image of a port pin state */
 uint8 Port10_1_State;
 static IfxAsclin_Asc asc;
 
+Ifx_STM *schdstmSfr;
+IfxStm_CompareConfig schdstmConfig;
+uint32 g_Ticks = 0;
+
+bool g_AscLin0LockR;
+bool g_AscLin0LockW;
+
 #define ASC_TX_BUFFER_SIZE 512
 static uint8 ascTxBuffer[ASC_TX_BUFFER_SIZE+ sizeof(Ifx_Fifo) + 8];
 #define ASC_RX_BUFFER_SIZE 512
 static uint8 ascRxBuffer[ASC_RX_BUFFER_SIZE+ sizeof(Ifx_Fifo) + 8];
-
-extern unsigned long SYSTEM_GetCpuClock(void);
-extern unsigned long SYSTEM_GetSysClock(void);
-extern unsigned long SYSTEM_GetStmClock(void);
-
-#define IFX_INTPRIO_ASCLIN0_TX 1
-#define IFX_INTPRIO_ASCLIN0_RX 2
-#define IFX_INTPRIO_ASCLIN0_ER 3
 
 IFX_INTERRUPT(asclin0TxISR, 0, IFX_INTPRIO_ASCLIN0_TX)
 {
@@ -54,17 +55,12 @@ IFX_INTERRUPT(asclin0ErISR, 0, IFX_INTPRIO_ASCLIN0_ER)
 	IfxAsclin_Asc_isrError(&asc);
 }
 
-
-Ifx_STM *schdstmSfr;
-IfxStm_CompareConfig schdstmConfig;
-uint32 system_tick = 0;
-
 IFX_INTERRUPT(schdSr0ISR, 0, IFX_INTPRIO_SCHD_STM0_SR0)
 {
 	IfxStm_clearCompareFlag(schdstmSfr, schdstmConfig.comparator);
 	IfxStm_increaseCompare(schdstmSfr, schdstmConfig.comparator, schdstmConfig.ticks);
 
-	system_tick++;
+	g_Ticks++;
 }
 
 void schd_init(void)
@@ -86,24 +82,25 @@ void schd_init(void)
 	// install interrupt handlers
 	IfxCpu_Irq_installInterruptHandler(&schdSr0ISR, IFX_INTPRIO_SCHD_STM0_SR0);
 	IfxCpu_enableInterrupts();
-	system_tick = 0;
+	g_Ticks = 0;
 }
 
-uint32 schd_GetTick(void)
+uint32 HAL_GetTick(void)
 {
-	return system_tick;
+	return g_Ticks;
 }
 
-void schd_SetTick(uint32 tick)
-{
-	system_tick = tick;
-}
-
+//void schd_SetTick(uint32 tick)
+//{
+//	g_Ticks = tick;
+//}
+//g_AscLin0LockR;
+//g_AscLin0LockW;
 size_t read(int fd, void *buffer, size_t count)
 {
 	Ifx_SizeT tmpCnt = count;
 
-	IfxAsclin_Asc_read(&asc, buffer, &tmpCnt, TIME_INFINITE);
+	IfxAsclin_Asc_read(&asc, buffer, &tmpCnt, tmpCnt);
 	return count;
 }
 
@@ -111,7 +108,7 @@ size_t write(int fd, const void *buffer, size_t count)
 {
 	Ifx_SizeT tmpCnt = count;
 
-	IfxAsclin_Asc_write(&asc, buffer, &tmpCnt, TIME_INFINITE);
+	IfxAsclin_Asc_write(&asc, buffer, &tmpCnt, tmpCnt);
 }
 
 /* Main Program */
@@ -208,38 +205,38 @@ int core0_main (void)
     while (1u)
     {
         /* Turn LED Off */
-    	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_high);
-    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_high);
+//    	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_high);
+//    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_high);
     	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_high);
     	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_high);
     	/* Click speaker */
     	IfxPort_setPinState(&MODULE_P33, 0u, IfxPort_State_high);
 
-    	printf("Cpu:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
-    			SYSTEM_GetCpuClock(),
-				SYSTEM_GetSysClock(),
-				SYSTEM_GetStmClock(),
-				__TRICORE_CORE__,
-				schd_GetTick()
-    	);
+//    	printf("Simple 3 Core Test \nCpu:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
+//    			SYSTEM_GetCpuClock(),
+//				SYSTEM_GetSysClock(),
+//				SYSTEM_GetStmClock(),
+//				__TRICORE_CORE__,
+//				HAL_GetTick()
+//    	);
     	/* test delay */
-    	tmpTick = schd_GetTick();
-    	while((tmpTick+TEST_DELAY_MS) > schd_GetTick())
+    	tmpTick = HAL_GetTick();
+    	while((tmpTick+TEST_DELAY_MS) > HAL_GetTick())
     	{
     		_nop();
     	}
 
         /* Turn LED On */
-    	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_low);
-    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_low);
+//    	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_low);
+//    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_low);
     	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_low);
     	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_low);
     	/* Click speaker */
     	IfxPort_setPinState(&MODULE_P33, 0u, IfxPort_State_low);
 
     	/* test delay */
-    	tmpTick = schd_GetTick();
-    	while((tmpTick+TEST_DELAY_MS) > schd_GetTick())
+    	tmpTick = HAL_GetTick();
+    	while((tmpTick+TEST_DELAY_MS) > HAL_GetTick())
     	{
     		_nop();
     	}

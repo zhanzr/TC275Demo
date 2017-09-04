@@ -4,11 +4,14 @@
 #define SuspendInt()	IfxCpu_disableInterrupts()
 #define ResumeInt()		IfxCpu_enableInterrupts()
 
+#include <system_tc2x.h>
 //#include "Appli/back/schd_tim.h"
 //#include "Appli/back/back_uart.h"
 
 #include "../Appli/PORT/PortDemoEntry.h"
 //#include "../App/VADC/VadcDemoEntry.h"
+
+#define TEST_DELAY_MS	2000U
 
 typedef struct
 {
@@ -37,5 +40,9 @@ void back_cyclic(void);
 void demo_cyclic(void);
 
 uint32 mcu_get_address(char *p_module, char *p_reg);
+
+extern unsigned long SYSTEM_GetCpuClock(void);
+extern unsigned long SYSTEM_GetSysClock(void);
+//extern unsigned long SYSTEM_GetStmClock(void);
 
 #endif
