@@ -31,26 +31,10 @@ int core1_main (void)
     IfxScuWdt_disableCpuWatchdog (IfxScuWdt_getCpuWatchdogPassword ());
     while (1)
     {
-/*
-    	if ( demo_idx == CORE_DEMO_INT) 	Core_DemoRun(0, 1);
-    	else if ( demo_idx == CORE_DEMO_NO_INT) Core_DemoRun(0, 0);
-*/
     	 /* Turn LED Off */
     	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_high);
     	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_high);
-//    	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_high);
-//    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_high);
-    	/* Click speaker */
-//    	IfxPort_setPinState(&MODULE_P33, 0u, IfxPort_State_high);
 
-//    	printf("Simple 3 Core Test \nCpu:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
-//    			SYSTEM_GetCpuClock(),
-//				SYSTEM_GetSysClock(),
-//				SYSTEM_GetStmClock(),
-//				__TRICORE_CORE__,
-//				HAL_GetTick()
-//    	);
-    	/* test delay */
     	tmpTick = HAL_GetTick();
     	while((tmpTick+TEST_DELAY_MS) > HAL_GetTick())
     	{
@@ -60,12 +44,7 @@ int core1_main (void)
     	/* Turn LED On */
     	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_low);
     	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_low);
-//    	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_low);
-//    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_low);
-    	/* Click speaker */
-//    	IfxPort_setPinState(&MODULE_P33, 0u, IfxPort_State_low);
 
-    	/* test delay */
     	tmpTick = HAL_GetTick();
     	while((tmpTick+TEST_DELAY_MS) > HAL_GetTick())
     	{
