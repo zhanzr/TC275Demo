@@ -33,7 +33,7 @@ IfxStm_CompareConfig schdstmConfig;
 uint32 g_Ticks = 0;
 
 bool g_AscLin0LockR;
-bool g_AscLin0LockW;
+volatile uint8_t g_AscLin0LockW;
 
 #define ASC_TX_BUFFER_SIZE 512
 static uint8 ascTxBuffer[ASC_TX_BUFFER_SIZE+ sizeof(Ifx_Fifo) + 8];
@@ -100,7 +100,7 @@ size_t read(int fd, void *buffer, size_t count)
 {
 	Ifx_SizeT tmpCnt = count;
 
-	IfxAsclin_Asc_read(&asc, buffer, &tmpCnt, tmpCnt);
+	IfxAsclin_Asc_read(&asc, buffer, &tmpCnt, TIME_INFINITE);
 	return count;
 }
 
@@ -108,7 +108,7 @@ size_t write(int fd, const void *buffer, size_t count)
 {
 	Ifx_SizeT tmpCnt = count;
 
-	IfxAsclin_Asc_write(&asc, buffer, &tmpCnt, tmpCnt);
+	IfxAsclin_Asc_write(&asc, buffer, &tmpCnt, TIME_INFINITE);
 }
 
 /* Main Program */
@@ -204,6 +204,28 @@ int core0_main (void)
     /* Endless loop */
     while (1u)
     {
+//    	while(0!=g_AscLin0LockW)
+//    	{
+//    		//Wait
+//    	}
+//    	//Lock it
+//    	IfxCpu_disableInterrupts();
+//    	g_AscLin0LockW ++;
+//    	IfxCpu_enableInterrupts();
+//
+//    	printf("Simple 3 Core Test Core[%u] \nCpu:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
+//    			(_mfcr(CPU_CORE_ID) & IFX_CPU_CORE_ID_CORE_ID_MSK),
+//    			SYSTEM_GetCpuClock(),
+//				SYSTEM_GetSysClock(),
+//				SYSTEM_GetStmClock(),
+//				__TRICORE_CORE__,
+//				HAL_GetTick()
+//    	);
+//    	//Unlock it
+//    	IfxCpu_disableInterrupts();
+//    	g_AscLin0LockW --;
+//    	IfxCpu_enableInterrupts();
+
         /* Turn LED Off */
     	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_high);
     	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_high);

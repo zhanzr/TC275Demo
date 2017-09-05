@@ -7,35 +7,7 @@
 * Copyright HighTec EDV-Systeme GmbH 1982-2016
 *====================================================================*/
 
-#include <machine/intrinsics.h>
-#include <machine/wdtcon.h>
-#ifdef USE_IRQ
-#include "interrupts.h"
-#endif /* USE_IRQ */
-
-#include "system_tc2x.h"
-
-#include "tc_inc_path.h"
-
-#include TC_INCLUDE(TCPATH/IfxScu_reg.h)
-#include TC_INCLUDE(TCPATH/IfxScu_bf.h)
-#include TC_INCLUDE(TCPATH/IfxCpu_reg.h)
-#include TC_INCLUDE(TCPATH/IfxCpu_bf.h)
-#include TC_INCLUDE(TCPATH/IfxStm_reg.h)
-#include TC_INCLUDE(TCPATH/IfxStm_bf.h)
-
-#if (APPKIT_TC2X7 > 0)
-/* Workaround for TLF35584 A-Step Bug on AppKit-TC2x7 */
-# define USE_DISABLE_EXT_WDT	1
-#else
-# define USE_DISABLE_EXT_WDT	0
-#endif /* APPKIT_TC2X7 > 0 */
-
-#if (USE_DISABLE_EXT_WDT == 1)
-# include TC_INCLUDE(TCPATH/IfxPort_reg.h)
-# include TC_INCLUDE(TCPATH/IfxQspi_reg.h)
-#endif /* USE_DISABLE_EXT_WDT */
-
+#include "main.h"
 
 typedef struct _PllInitValue_t
 {

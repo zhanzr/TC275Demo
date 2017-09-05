@@ -28,10 +28,12 @@
 #ifndef IFXASCLIN_PINMAP_H
 #define IFXASCLIN_PINMAP_H
 
-#include <_Reg/IfxAsclin_reg.h>
 #include <_Impl/IfxAsclin_cfg.h>
 #include <Port/Std/IfxPort.h>
 
+#include <tc_inc_path.h>
+
+#include TC_INCLUDE(TCPATH/IfxAsclin_reg.h)
 /** \addtogroup IfxLld_Asclin_pinmap
  * \{ */
 

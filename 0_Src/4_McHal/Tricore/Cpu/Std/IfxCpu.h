@@ -48,12 +48,15 @@
 /******************************************************************************/
 
 #include "_Impl/IfxCpu_cfg.h"
-#include "IfxSrc_reg.h"
-#include "IfxScu_reg.h"
+
 #include "Scu/Std/IfxScuWdt.h"
 #include "_Impl/IfxScu_cfg.h"
 #include "_Utilities/Ifx_Assert.h"
 
+#include <tc_inc_path.h>
+
+#include TC_INCLUDE(TCPATH/IfxSrc_reg.h)
+#include TC_INCLUDE(TCPATH/IfxScu_reg.h)
 /******************************************************************************/
 /*-----------------------------------Macros-----------------------------------*/
 /******************************************************************************/

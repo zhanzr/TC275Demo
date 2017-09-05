@@ -106,11 +106,14 @@
 #include "_Impl/IfxScu_cfg.h"
 #include "Scu/Std/IfxScuWdt.h"
 #include "Cpu/Std/IfxCpu.h"
-#include "IfxStm_reg.h"
-#include "IfxScu_reg.h"
-#include "IfxFlash_reg.h"
+
 #include "_PinMap/IfxScu_PinMap.h"
 
+#include <tc_inc_path.h>
+
+#include TC_INCLUDE(TCPATH/IfxStm_reg.h)
+#include TC_INCLUDE(TCPATH/IfxScu_reg.h)
+#include TC_INCLUDE(TCPATH/IfxFlash_reg.h)
 /******************************************************************************/
 /*-----------------------------------Macros-----------------------------------*/
 /******************************************************************************/

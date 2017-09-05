@@ -28,10 +28,12 @@
 #ifndef IFXSCU_PINMAP_H
 #define IFXSCU_PINMAP_H
 
-#include <_Reg/IfxScu_reg.h>
 #include <_Impl/IfxScu_cfg.h>
 #include <Port/Std/IfxPort.h>
 
+#include <tc_inc_path.h>
+
+#include TC_INCLUDE(TCPATH/IfxScu_reg.h)
 /** \addtogroup IfxLld_Scu_pinmap
  * \{ */
 

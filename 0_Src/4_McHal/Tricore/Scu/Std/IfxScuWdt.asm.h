@@ -28,8 +28,10 @@
 #define IFXSCUWDT_ASM_H 1
 
 #include "Cpu/Std/Ifx_Types.h"
-#include "IfxScu_reg.h"
 
+#include <tc_inc_path.h>
+
+#include TC_INCLUDE(TCPATH/IfxScu_reg.h)
 /** \addtogroup IfxLld_Scu_Std_Wdt_Operative
  * \{ */
 

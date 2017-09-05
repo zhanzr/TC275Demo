@@ -46,10 +46,13 @@
 #include "Scu/Std/IfxScuCcu.h"
 #include "Scu/Std/IfxScuWdt.h"
 #include "Cpu/Std/IfxCpu_Intrinsics.h"
-#include "IfxAsclin_reg.h"
+
 #include "Src/Std/IfxSrc.h"
 #include "_PinMap/IfxAsclin_PinMap.h"
 
+#include <tc_inc_path.h>
+
+#include TC_INCLUDE(TCPATH/IfxAsclin_reg.h)
 /******************************************************************************/
 /*--------------------------------Enumerations--------------------------------*/
 /******************************************************************************/

@@ -33,8 +33,11 @@
 #define IFXSCU_CFG_H
 /******************************************************************************/
 #include "Ifx_Cfg.h"
-#include "IfxScu_bf.h"
-#include "IfxFlash_bf.h"
+
+#include <tc_inc_path.h>
+
+#include TC_INCLUDE(TCPATH/IfxScu_bf.h)
+#include TC_INCLUDE(TCPATH/IfxFlash_bf.h)
 
 /******************************************************************************/
 /*                           Macro                                            */

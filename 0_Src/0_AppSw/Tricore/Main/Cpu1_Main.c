@@ -19,6 +19,8 @@
 
 #include "main.h"
 
+extern volatile uint8_t g_AscLin0LockW;
+
 int core1_main (void)
 {
 	uint32_t tmpTick;
@@ -31,6 +33,28 @@ int core1_main (void)
     IfxScuWdt_disableCpuWatchdog (IfxScuWdt_getCpuWatchdogPassword ());
     while (1)
     {
+//    	while(g_AscLin0LockW)
+//    	{
+//    		//Wait
+//    	}
+//    	//Lock it
+//    	IfxCpu_disableInterrupts();
+//    	g_AscLin0LockW ++;
+//    	IfxCpu_enableInterrupts();
+//
+//    	printf("Simple 3 Core Test Core[%u] \nCpu:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
+//    			(_mfcr(CPU_CORE_ID) & IFX_CPU_CORE_ID_CORE_ID_MSK),
+//    			SYSTEM_GetCpuClock(),
+//				SYSTEM_GetSysClock(),
+//				SYSTEM_GetStmClock(),
+//				__TRICORE_CORE__,
+//				HAL_GetTick()
+//    	);
+//    	//Unlock it
+//    	IfxCpu_disableInterrupts();
+//    	g_AscLin0LockW --;
+//    	IfxCpu_enableInterrupts();
+
     	 /* Turn LED Off */
     	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_high);
     	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_high);

@@ -19,6 +19,8 @@
 
 #include "main.h"
 
+extern volatile uint8_t g_AscLin0LockW;
+
 int core2_main (void)
 {
 	uint32_t tmpTick;
@@ -31,18 +33,28 @@ int core2_main (void)
     IfxScuWdt_disableCpuWatchdog (IfxScuWdt_getCpuWatchdogPassword ());
     while (1)
     {
-/*
-    	if ( demo_idx == CORE_DEMO_INT) 	Core_DemoRun(0, 1);
-    	else if ( demo_idx == CORE_DEMO_NO_INT) Core_DemoRun(0, 0);
-*/
-    	printf("Simple 3 Core Test \nCpu:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
+//    	while(0!=g_AscLin0LockW)
+//    	{
+//    		//Wait
+//    	}
+//    	//Lock it
+//    	IfxCpu_disableInterrupts();
+//    	g_AscLin0LockW ++;
+//    	IfxCpu_enableInterrupts();
+
+    	printf("Simple 3 Core Test Core[%u] \nCpu:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
+    			(_mfcr(CPU_CORE_ID) & IFX_CPU_CORE_ID_CORE_ID_MSK),
     			SYSTEM_GetCpuClock(),
 				SYSTEM_GetSysClock(),
 				SYSTEM_GetStmClock(),
 				__TRICORE_CORE__,
 				HAL_GetTick()
     	);
-    	/* test delay */
+//    	//Unlock it
+//    	IfxCpu_disableInterrupts();
+//    	g_AscLin0LockW --;
+//    	IfxCpu_enableInterrupts();
+
     	tmpTick = HAL_GetTick();
     	while((tmpTick+TEST_DELAY_MS) > HAL_GetTick())
     	{

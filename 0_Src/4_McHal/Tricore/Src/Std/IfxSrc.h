@@ -94,7 +94,10 @@
 
 #include "_Impl/IfxSrc_cfg.h"
 #include "Cpu/Std/IfxCpu_Intrinsics.h"
-#include "IfxSrc_reg.h"
+
+#include <tc_inc_path.h>
+
+#include TC_INCLUDE(TCPATH/IfxSrc_reg.h)
 /** \addtogroup IfxLld_Src_Std_Service_Request
  * \{ */
 
