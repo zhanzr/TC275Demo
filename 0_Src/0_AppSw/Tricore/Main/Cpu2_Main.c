@@ -42,7 +42,7 @@ int core2_main (void)
 //    	g_AscLin0LockW ++;
 //    	IfxCpu_enableInterrupts();
 
-    	printf("Simple 3 Core Test Core[%u] \nCpu:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
+    	printf("Startup Core[%u] \nCpu:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
     			(_mfcr(CPU_CORE_ID) & IFX_CPU_CORE_ID_CORE_ID_MSK),
     			SYSTEM_GetCpuClock(),
 				SYSTEM_GetSysClock(),

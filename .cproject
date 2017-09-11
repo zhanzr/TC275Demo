@@ -41,7 +41,7 @@
 							</tool>
 							<tool id="com.rt.hightec.buildsystem.tricore.new.compiler.pcp.2024480535" name="TriCore PCP Compiler" superClass="com.rt.hightec.buildsystem.tricore.new.compiler.pcp">
 								<option id="pcp.opion.include.path.686705253" name="Include Paths" superClass="pcp.opion.include.path" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;C:/Users/chenhan/mywork/software/MCU/32 Bits/AURIX/TC27x/HighTech GNU/BaseFramework_TC27xB/h&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:/Users/chenhan/mywork/software/MCU/32 Bits/AURIX/TC27x/HighTech GNU/BaseFramework_TC27xC/h&quot;"/>
 								</option>
 								<inputType id="com.rt.hightec.buildsystem.tricore.new.compiler.c.input.cpcp.1902716555" name="Compiler Input (CPCP)" superClass="com.rt.hightec.buildsystem.tricore.new.compiler.c.input.cpcp"/>
 							</tool>

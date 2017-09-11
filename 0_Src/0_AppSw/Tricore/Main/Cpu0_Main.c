@@ -176,14 +176,14 @@ int core0_main (void)
 
     /* Make the speaker click */
     /* Configure P33.0 as an output (speaker) */
-    IfxPort_setPinMode(&MODULE_P33, 0u, IfxPort_Mode_outputPushPullGeneral);
-    IfxPort_setPinPadDriver(&MODULE_P33, 0u, IfxPort_PadDriver_cmosAutomotiveSpeed1) ;
+//    IfxPort_setPinMode(&MODULE_P33, 0u, IfxPort_Mode_outputPushPullGeneral);
+//    IfxPort_setPinPadDriver(&MODULE_P33, 0u, IfxPort_PadDriver_cmosAutomotiveSpeed1) ;
 
     endinitPw = IfxScuWdt_getCpuWatchdogPassword ();
     IfxScuWdt_clearCpuEndinit (endinitPw);
 
-    /* Set Emergency Stop Function For P33.0 */
-    IfxPort_setESR(&MODULE_P33, 0u);
+//    /* Set Emergency Stop Function For P33.0 */
+//    IfxPort_setESR(&MODULE_P33, 0u);
 
     // Need to test this
     SCU_PMSWCR0.B.TRISTEN = 1u;   /* Allow write to SCU_PMSWCR0.B.TRISTREQ */
@@ -228,9 +228,9 @@ int core0_main (void)
 
         /* Turn LED Off */
     	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_high);
-    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_high);
+//    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_high);
     	/* Click speaker */
-    	IfxPort_setPinState(&MODULE_P33, 0u, IfxPort_State_high);
+//    	IfxPort_setPinState(&MODULE_P33, 0u, IfxPort_State_high);
 
     	/* test delay */
     	tmpTick = HAL_GetTick();
@@ -241,9 +241,9 @@ int core0_main (void)
 
         /* Turn LED On */
     	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_low);
-    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_low);
+//    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_low);
     	/* Click speaker */
-    	IfxPort_setPinState(&MODULE_P33, 0u, IfxPort_State_low);
+//    	IfxPort_setPinState(&MODULE_P33, 0u, IfxPort_State_low);
 
     	/* test delay */
     	tmpTick = HAL_GetTick();

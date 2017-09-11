@@ -57,7 +57,7 @@ int core1_main (void)
 
     	 /* Turn LED Off */
     	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_high);
-    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_high);
+//    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_high);
 
     	tmpTick = HAL_GetTick();
     	while((tmpTick+TEST_DELAY_MS) > HAL_GetTick())
@@ -67,7 +67,7 @@ int core1_main (void)
 
     	/* Turn LED On */
     	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_low);
-    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_low);
+//    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_low);
 
     	tmpTick = HAL_GetTick();
     	while((tmpTick+TEST_DELAY_MS) > HAL_GetTick())

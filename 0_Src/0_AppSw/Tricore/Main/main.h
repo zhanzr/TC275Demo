@@ -6,9 +6,7 @@
 
 #include <machine/intrinsics.h>
 #include <machine/wdtcon.h>
-#ifdef USE_IRQ
 #include "interrupts.h"
-#endif /* USE_IRQ */
 
 #include <system_tc2x.h>
 
