@@ -20,11 +20,12 @@
 
 /* Simple timing loop */
 uint32 volatile DelayLoopCounter;
-#define TEST_DELAY_MS	2000U
 
 /* Image of a port pin state */
 uint8 Port10_1_State;
 static IfxAsclin_Asc asc;
+
+IfxCpu_mutexLock g_Asc0_Lock;
 
 #define ASC_TX_BUFFER_SIZE 512
 static uint8 ascTxBuffer[ASC_TX_BUFFER_SIZE+ sizeof(Ifx_Fifo) + 8];
@@ -143,14 +144,14 @@ int core0_main (void)
 	&IfxAsclin0_RXA_P14_1_IN, IfxPort_InputMode_pullUp, /* Rx pin */
 	NULL, IfxPort_OutputMode_pushPull, /* RTS pin not used */
 //	&IfxAsclin0_TX_P15_2_OUT, IfxPort_OutputMode_pushPull, /* Tx pin */
-	&IfxAsclin0_TX_P15_3_OUT, IfxPort_OutputMode_pushPull, /* Tx pin */
+	&IfxAsclin0_TX_P14_0_OUT, IfxPort_OutputMode_pushPull, /* Tx pin */
 	IfxPort_PadDriver_cmosAutomotiveSpeed1
 	};
 	ascConfig.pins = &pins;
 	/* Manually set pad driver to speed grade 1 */
 	/*(otherwise 3v3 is not seen as a '1' ) */
-//	IfxPort_setPinPadDriver(&MODULE_P15,2,
-	IfxPort_setPinPadDriver(&MODULE_P15,3,
+	IfxPort_setPinPadDriver(&MODULE_P14,0,
+//	IfxPort_setPinPadDriver(&MODULE_P15,3,
 	IfxPort_PadDriver_cmosAutomotiveSpeed1) ;
 
 	IfxPort_setPinPadDriver(&MODULE_P14,1,
@@ -208,20 +209,27 @@ int core0_main (void)
     while (1u)
     {
         /* Turn LED Off */
-    	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_high);
-    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_high);
-    	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_high);
-    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_high);
+//    	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_high);
+//    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_high);
+//    	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_high);
+//    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_high);
     	/* Click speaker */
     	IfxPort_setPinState(&MODULE_P33, 0u, IfxPort_State_high);
 
-    	printf("Cpu:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
-    			SYSTEM_GetCpuClock(),
-				SYSTEM_GetSysClock(),
-				SYSTEM_GetStmClock(),
-				__TRICORE_CORE__,
-				schd_GetTick()
-    	);
+    	boolean flag = IfxCpu_acquireMutex(&g_Asc0_Lock);
+    	if (flag){
+    		printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
+    				IfxCpu_getCoreId(),
+					SYSTEM_GetCpuClock(),
+					SYSTEM_GetSysClock(),
+					SYSTEM_GetStmClock(),
+					__TRICORE_CORE__,
+					schd_GetTick()
+    		);
+
+    		IfxCpu_releaseMutex(&g_Asc0_Lock);
+    	}
+
     	/* test delay */
     	tmpTick = schd_GetTick();
     	while((tmpTick+TEST_DELAY_MS) > schd_GetTick())
@@ -230,10 +238,10 @@ int core0_main (void)
     	}
 
         /* Turn LED On */
-    	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_low);
-    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_low);
-    	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_low);
-    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_low);
+//    	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_low);
+//    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_low);
+//    	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_low);
+//    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_low);
     	/* Click speaker */
     	IfxPort_setPinState(&MODULE_P33, 0u, IfxPort_State_low);
 

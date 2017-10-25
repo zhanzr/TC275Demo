@@ -6,9 +6,11 @@
 
 //#include "Appli/back/schd_tim.h"
 //#include "Appli/back/back_uart.h"
-
+#include <stdint.h>
 #include "../Appli/PORT/PortDemoEntry.h"
 //#include "../App/VADC/VadcDemoEntry.h"
+
+#define TEST_DELAY_MS	2000U
 
 typedef struct
 {

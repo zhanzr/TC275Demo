@@ -1,4 +1,5 @@
 #include <Appli/DSADC/DsadcDemoEntry.h>
+#include "Appli/Ifx_IntPrioDef.h"
 #include "Ifx_LutAtan2f32.h"
 
 static uint32 dsadc_count = 0;

@@ -2,7 +2,7 @@
 #define DEMO_DSADC
 
 #include "IfxDsadc_Rdc.h"
-#include "Appli/Back/demo_handler.h"
+//#include "Appli/Back/demo_handler.h"
 
 #define DSADC_PRE_DIVDER	 	(1)
 #define DSADC_DIVIDER_CONV	    (10)
@@ -18,7 +18,7 @@
 
 //#define iLLD
 #define DERIVATIVE_TC27xC
-#define DSADC_INT
+//#define DSADC_INT
 #define LOGIC_BOARD
 //#define GAIN_CALIBRATION_1
 //#define GAIN_CALIBRATION_2

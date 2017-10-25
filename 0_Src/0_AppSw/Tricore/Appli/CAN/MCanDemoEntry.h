@@ -2,7 +2,7 @@
 #define DEMO_MULTICAN
 
 #include <Multican/Can/IfxMultican_Can.h>
-#include "Appli/Back/demo_handler.h"
+//#include "Appli/Back/demo_handler.h"
 
 #define DEMO_START_KIT 1
 
