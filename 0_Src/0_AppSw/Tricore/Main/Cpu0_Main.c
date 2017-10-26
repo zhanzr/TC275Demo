@@ -217,7 +217,8 @@ int core0_main (void)
     	IfxPort_setPinState(&MODULE_P33, 0u, IfxPort_State_high);
 
     	boolean flag = IfxCpu_acquireMutex(&g_Asc0_Lock);
-    	if (flag){
+    	if (flag)
+    	{
     		printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
     				IfxCpu_getCoreId(),
 					SYSTEM_GetCpuClock(),
