@@ -18,6 +18,7 @@
 #include "IfxAsclin_reg.h"
 #include <Asclin/Asc/IfxAsclin_Asc.h>
 #include <Stm/Std/IfxStm.h>
+#include <Dts/Dts/IfxDts_Dts.h>
 
 /* Simple timing loop */
 uint32 volatile DelayLoopCounter;
@@ -116,6 +117,24 @@ size_t write(int fd, const void *buffer, size_t count)
 	IfxAsclin_Asc_write(&asc, buffer, &tmpCnt, TIME_INFINITE);
 }
 
+/** \brief Demo init API
+ *
+ * This function is called from main during initialization phase
+ */
+void DtsBasicDemo_init(void)
+{
+    /* Get the default configuration */
+    IfxDts_Dts_Config dtsConfig;
+    IfxDts_Dts_initModuleConfig(&dtsConfig);
+
+    /* adapt the default configuration if required */
+    dtsConfig.lowerTemperatureLimit = -35; /* SMU alarm if temperature value is below this Celsius value */
+    dtsConfig.upperTemperatureLimit = 150; /* SMU alarm if temperature value is above this Celsius value */
+
+    /* Module initialisation */
+    IfxDts_Dts_initModule(&dtsConfig);
+}
+
 /* Main Program */
 int core0_main (void)
 {
@@ -204,28 +223,42 @@ int core0_main (void)
     IfxCpu_Irq_installInterruptHandler(&asclin0TxISR, IFX_INTPRIO_ASCLIN0_TX);
     IfxCpu_Irq_installInterruptHandler(&asclin0RxISR, IFX_INTPRIO_ASCLIN0_RX);
     IfxCpu_Irq_installInterruptHandler(&asclin0ErISR, IFX_INTPRIO_ASCLIN0_ER);
+
+    //DTS Code
+    float32 temperature;
+
+    DtsBasicDemo_init();
+
     IfxCpu_enableInterrupts();
 
     /* Endless loop */
     while (1u)
     {
-        /* Turn LED Off */
-//    	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_high);
-//    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_high);
-//    	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_high);
-//    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_high);
+        /* start Sensor */
+        IfxDts_Dts_startSensor();
+
+    	/* wait until a new result is available */
+    	while (IfxDts_Dts_isBusy())
+    	{}
+
+    	/* convert result to Celsius */
+    	temperature = IfxDts_Dts_getTemperatureCelsius();
 
     	boolean flag = IfxCpu_acquireMutex(&g_Asc0_Lock);
     	if (flag)
     	{
-    		printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
-    				IfxCpu_getCoreId(),
-					SYSTEM_GetCpuClock(),
-					SYSTEM_GetSysClock(),
-					SYSTEM_GetStmClock(),
-					__TRICORE_CORE__,
-					schd_GetTick()
-    		);
+//    		printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n"\
+//    				"DTS Temperature: %3.1f'C",
+//    				IfxCpu_getCoreId(),
+//					SYSTEM_GetCpuClock(),
+//					SYSTEM_GetSysClock(),
+//					SYSTEM_GetStmClock(),
+//					__TRICORE_CORE__,
+//					schd_GetTick(),
+//					temperature
+//    		);
+
+    		printf("%.1f\n", temperature);
 
     		IfxCpu_releaseMutex(&g_Asc0_Lock);
     		IfxPort_togglePin(&MODULE_P33, 0u);
@@ -235,20 +268,9 @@ int core0_main (void)
     		wait(1000);
     	}
 
-    	/* test delay */
-    	tmpTick = schd_GetTick();
-    	while((tmpTick+TEST_DELAY_MS) > schd_GetTick())
-    	{
-    		_nop();
-    	}
-
-        /* Turn LED On */
-//    	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_low);
-//    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_low);
-//    	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_low);
-//    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_low);
-
+    	wait(TEST_DELAY_MS*10);
     }
+
     return (1u);
 }
 
