@@ -15,6 +15,7 @@
 #include "Scu\Std\IfxScuWdt.h"
 #include "main.h"
 #include "Port\Std\IfxPort.h"
+#include "IfxAsclin_reg.h"
 #include <Asclin/Asc/IfxAsclin_Asc.h>
 #include <Stm/Std/IfxStm.h>
 
@@ -213,8 +214,6 @@ int core0_main (void)
 //    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_high);
 //    	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_high);
 //    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_high);
-    	/* Click speaker */
-    	IfxPort_setPinState(&MODULE_P33, 0u, IfxPort_State_high);
 
     	boolean flag = IfxCpu_acquireMutex(&g_Asc0_Lock);
     	if (flag)
@@ -229,6 +228,11 @@ int core0_main (void)
     		);
 
     		IfxCpu_releaseMutex(&g_Asc0_Lock);
+    		IfxPort_togglePin(&MODULE_P33, 0u);
+    	}
+    	else
+    	{
+    		wait(1000);
     	}
 
     	/* test delay */
@@ -243,18 +247,6 @@ int core0_main (void)
 //    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_low);
 //    	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_low);
 //    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_low);
-    	/* Click speaker */
-    	IfxPort_setPinState(&MODULE_P33, 0u, IfxPort_State_low);
-
-    	/* test delay */
-    	tmpTick = schd_GetTick();
-    	while((tmpTick+TEST_DELAY_MS) > schd_GetTick())
-    	{
-    		_nop();
-    	}
-
-    	/* Read Port 10.2 into a variable */
-    	Port10_1_State = IfxPort_getPinState(&MODULE_P10, 10u);
 
     }
     return (1u);
