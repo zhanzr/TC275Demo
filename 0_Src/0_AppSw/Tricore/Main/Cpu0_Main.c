@@ -189,36 +189,29 @@ int core0_main (void)
     IfxScuWdt_disableSafetyWatchdog (IfxScuWdt_getSafetyWatchdogPassword ());
 
     /* Configure P33.8 P33.9 P33.10 P33.11 as an output */
-    IfxPort_setPinMode(&MODULE_P33, 8u, IfxPort_Mode_outputPushPullGeneral);
-    IfxPort_setPinPadDriver(&MODULE_P33, 8u, IfxPort_PadDriver_cmosAutomotiveSpeed1) ;
-    IfxPort_setPinMode(&MODULE_P33, 9u, IfxPort_Mode_outputPushPullGeneral);
-    IfxPort_setPinPadDriver(&MODULE_P33, 9u, IfxPort_PadDriver_cmosAutomotiveSpeed1) ;
-    IfxPort_setPinMode(&MODULE_P33, 10u, IfxPort_Mode_outputPushPullGeneral);
-    IfxPort_setPinPadDriver(&MODULE_P33, 10u, IfxPort_PadDriver_cmosAutomotiveSpeed1) ;
-    IfxPort_setPinMode(&MODULE_P33, 11u, IfxPort_Mode_outputPushPullGeneral);
-    IfxPort_setPinPadDriver(&MODULE_P33, 11u, IfxPort_PadDriver_cmosAutomotiveSpeed1) ;
+    Appli_GpioInit();
 
     /* Make the speaker click */
     /* Configure P33.0 as an output (speaker) */
-    IfxPort_setPinMode(&MODULE_P33, 0u, IfxPort_Mode_outputPushPullGeneral);
-    IfxPort_setPinPadDriver(&MODULE_P33, 0u, IfxPort_PadDriver_cmosAutomotiveSpeed1) ;
+//    IfxPort_setPinMode(&MODULE_P33, 0u, IfxPort_Mode_outputPushPullGeneral);
+//    IfxPort_setPinPadDriver(&MODULE_P33, 0u, IfxPort_PadDriver_cmosAutomotiveSpeed1) ;
 
-    endinitPw = IfxScuWdt_getCpuWatchdogPassword ();
-    IfxScuWdt_clearCpuEndinit (endinitPw);
+//    endinitPw = IfxScuWdt_getCpuWatchdogPassword ();
+//    IfxScuWdt_clearCpuEndinit (endinitPw);
 
-    /* Set Emergency Stop Function For P33.0 */
-    IfxPort_setESR(&MODULE_P33, 0u);
+//    /* Set Emergency Stop Function For P33.0 */
+//    IfxPort_setESR(&MODULE_P33, 0u);
 
     // Need to test this
-    SCU_PMSWCR0.B.TRISTEN = 1u;   /* Allow write to SCU_PMSWCR0.B.TRISTREQ */
-    SCU_PMSWCR0.B.TRISTREQ = 1u;  /* Emergency stop pins go tristate */
-    SCU_PMSWCR0.B.TRISTEN = 0u;   /* Disable write to SCU_PMSWCR0.B.TRISTREQ */
+//    SCU_PMSWCR0.B.TRISTEN = 1u;   /* Allow write to SCU_PMSWCR0.B.TRISTREQ */
+//    SCU_PMSWCR0.B.TRISTREQ = 1u;  /* Emergency stop pins go tristate */
+//    SCU_PMSWCR0.B.TRISTEN = 0u;   /* Disable write to SCU_PMSWCR0.B.TRISTREQ */
+//
+//    SCU_EMSR.B.POL = 1u;  /* Active low on P33.8 */
+//    SCU_EMSR.B.MODE = 1u;
+//    SCU_EMSR.B.PSEL = 0u; /* Use P33.8 as emergency stop trigger pin */
 
-    SCU_EMSR.B.POL = 1u;  /* Active low on P33.8 */
-    SCU_EMSR.B.MODE = 1u;
-    SCU_EMSR.B.PSEL = 0u; /* Use P33.8 as emergency stop trigger pin */
-
-    IfxScuWdt_setCpuEndinit (endinitPw);
+//    IfxScuWdt_setCpuEndinit (endinitPw);
 
     IfxCpu_Irq_installInterruptHandler(&asclin0TxISR, IFX_INTPRIO_ASCLIN0_TX);
     IfxCpu_Irq_installInterruptHandler(&asclin0RxISR, IFX_INTPRIO_ASCLIN0_RX);
@@ -258,17 +251,17 @@ int core0_main (void)
 //					temperature
 //    		);
 
-    		printf("%.1f\n", temperature);
+    		printf("%.2f\n", temperature);
 
     		IfxCpu_releaseMutex(&g_Asc0_Lock);
-    		IfxPort_togglePin(&MODULE_P33, 0u);
+//    		IfxPort_togglePin(&MODULE_P33, 0u);
     	}
     	else
     	{
     		wait(1000);
     	}
 
-    	wait(TEST_DELAY_MS*10);
+    	wait(TEST_DELAY_MS*1000);
     }
 
     return (1u);
