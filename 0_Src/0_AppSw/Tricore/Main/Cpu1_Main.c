@@ -44,13 +44,14 @@ int core1_main (void)
     while (1)
     {
     	IfxPort_togglePin(&MODULE_P33, 8u);
-    	/* test delay */
+     	IfxPort_togglePin(&MODULE_P33, 9u);
+   	/* test delay */
     	tmpTick = schd_GetTick();
-    	wait(TEST_DELAY_MS*2);
-//    	while((tmpTick+TEST_DELAY_MS) > schd_GetTick())
-//    	{
-//    		_nop();
-//    	}
+//    	wait(TEST_DELAY_MS*20000);
+    	while((tmpTick+TEST_DELAY_MS) > schd_GetTick())
+    	{
+    		_nop();
+    	}
 //    	boolean flag = IfxCpu_acquireMutex(&g_Asc0_Lock);
 //    	if (flag){
 //    		printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",

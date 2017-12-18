@@ -43,13 +43,15 @@ int core2_main (void)
     IfxScuWdt_disableCpuWatchdog (IfxScuWdt_getCpuWatchdogPassword ());
     while (1)
     {
-    	IfxPort_togglePin(&MODULE_P33, 11);
+    	IfxPort_togglePin(&MODULE_P33, 10u);
+     	IfxPort_togglePin(&MODULE_P33, 11u);
+   	/* test delay */
     	tmpTick = schd_GetTick();
-    	wait((TEST_DELAY_MS*2));
-//    	while((tmpTick+TEST_DELAY_MS*2) > schd_GetTick())
-//    	{
-//    		_nop();
-//    	}
+//    	wait(TEST_DELAY_MS*40000);
+    	while((tmpTick+TEST_DELAY_MS*2) > schd_GetTick())
+    	{
+    		_nop();
+    	}
 //    	boolean flag = IfxCpu_acquireMutex(&g_Asc0_Lock);
 //    	if (flag){
 //    		printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
