@@ -43,7 +43,7 @@ int core1_main (void)
     IfxScuWdt_disableCpuWatchdog (IfxScuWdt_getCpuWatchdogPassword ());
     while (1)
     {
-    	IfxPort_togglePin(&MODULE_P33, 8u);
+//    	IfxPort_togglePin(&MODULE_P33, 8u);
      	IfxPort_togglePin(&MODULE_P33, 9u);
    	/* test delay */
     	tmpTick = schd_GetTick();

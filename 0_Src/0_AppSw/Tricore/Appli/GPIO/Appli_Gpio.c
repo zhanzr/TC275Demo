@@ -19,7 +19,7 @@ void Appli_GpioInit(void)
 {
     //IfxPort_Io_initModule(&conf);
     // configure P33.8 as general output
-    IfxPort_setPinMode(&MODULE_P33, 8,  IfxPort_Mode_outputOpenDrainGeneral);
+//    IfxPort_setPinMode(&MODULE_P33, 8,  IfxPort_Mode_outputOpenDrainGeneral);
     // configure P33.9 as general output
     IfxPort_setPinMode(&MODULE_P33, 9,  IfxPort_Mode_outputOpenDrainGeneral);
     // configure P33.10 as general output
@@ -39,16 +39,5 @@ void Appli_GpioDemoInit(void)
 
     if(demo_item == 2)
     	IfxCpu_setCoreMode(&MODULE_CPU1, IfxCpu_CoreMode_run);
-}
-
-void Appli_GpioDemoDeInit(void)
-{
-	IfxPort_setPinState(&MODULE_P33,8,IfxPort_State_high);
-	IfxPort_setPinState(&MODULE_P33,9,IfxPort_State_high);
-	IfxPort_setPinState(&MODULE_P33,10,IfxPort_State_high);
-	IfxPort_setPinState(&MODULE_P33,11,IfxPort_State_high);
-
-    if(demo_item == 2)
-    	IfxCpu_setCoreMode(&MODULE_CPU1, IfxCpu_CoreMode_idle);
 }
 
