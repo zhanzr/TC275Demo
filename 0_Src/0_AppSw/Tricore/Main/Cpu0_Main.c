@@ -214,7 +214,10 @@ int core0_main (void)
 //    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_high);
 //    	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_high);
 //    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_high);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 009e84c3c9b906356ccbca14c06e5d96616a64ff
     	boolean flag = IfxCpu_acquireMutex(&g_Asc0_Lock);
     	if (flag)
     	{
@@ -228,25 +231,44 @@ int core0_main (void)
     		);
 
     		IfxCpu_releaseMutex(&g_Asc0_Lock);
+<<<<<<< HEAD
     		IfxPort_togglePin(&MODULE_P33, 0u);
     	}
     	else
     	{
     		wait(1000);
+=======
+        	/* Click speaker */
+        	IfxPort_togglePin(&MODULE_P33, 0u);
+//        	wait(100000);
+        	tmpTick = schd_GetTick();
+        	while((tmpTick+2*TEST_DELAY_MS) > schd_GetTick())
+        	{
+        		_nop();
+        	}
+>>>>>>> 009e84c3c9b906356ccbca14c06e5d96616a64ff
     	}
 
     	/* test delay */
-    	tmpTick = schd_GetTick();
-    	while((tmpTick+TEST_DELAY_MS) > schd_GetTick())
-    	{
-    		_nop();
-    	}
 
         /* Turn LED On */
 //    	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_low);
 //    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_low);
 //    	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_low);
 //    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_low);
+<<<<<<< HEAD
+=======
+
+    	/* test delay */
+//    	tmpTick = schd_GetTick();
+//    	while((tmpTick+TEST_DELAY_MS) > schd_GetTick())
+//    	{
+//    		_nop();
+//    	}
+//
+//    	/* Read Port 10.2 into a variable */
+//    	Port10_1_State = IfxPort_getPinState(&MODULE_P10, 10u);
+>>>>>>> 009e84c3c9b906356ccbca14c06e5d96616a64ff
 
     }
     return (1u);
