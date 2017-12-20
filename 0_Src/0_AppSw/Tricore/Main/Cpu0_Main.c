@@ -245,7 +245,7 @@ void GtmTomPwmHlDemo_init(void)
     /** - Initialise the GTM part */
     GtmTomPwmHl_initTimer();
 
-    printf("Gtm Tom PwmHl is initialised\n");
+//    printf("Gtm Tom PwmHl is initialised\n");
 
     /* enable interrupts again */
     IfxCpu_restoreInterrupts(interruptState);
@@ -266,6 +266,8 @@ IfxCpu_mutexLock g_Asc0_Lock;
 static uint8 ascTxBuffer[ASC_TX_BUFFER_SIZE+ sizeof(Ifx_Fifo) + 8];
 #define ASC_RX_BUFFER_SIZE 512
 static uint8 ascRxBuffer[ASC_RX_BUFFER_SIZE+ sizeof(Ifx_Fifo) + 8];
+
+extern int demo_item;
 
 extern unsigned long SYSTEM_GetCpuClock(void);
 extern unsigned long SYSTEM_GetSysClock(void);
@@ -456,6 +458,10 @@ int core0_main (void)
 
     GtmTomPwmHlDemo_init();
 
+    demo_item = 1;
+    Appli_AdcInit();
+	printf("VADC Demo %u\n", demo_item);
+
     /* Endless loop */
     while (1u)
     {
@@ -482,7 +488,7 @@ int core0_main (void)
 //					temperature
 //    		);
 
-    		printf("%.2f %u %u\n", temperature, system_tick, system_tick_2);
+    		//printf("%.2f %u %u\n", temperature, system_tick, system_tick_2);
 
     		IfxCpu_releaseMutex(&g_Asc0_Lock);
     	}
@@ -490,6 +496,8 @@ int core0_main (void)
     	{
     		wait(1000);
     	}
+
+    	Appli_AdcCyclic();
 
     	wait(1000000);
     }

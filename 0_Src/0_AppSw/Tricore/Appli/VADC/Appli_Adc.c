@@ -1,7 +1,7 @@
 #include "Appli_Adc.h"
 #include "Tricore\Appli\Entry\Appli_Entry.h"
 
-int adc_count = 0;
+int adc_count;
 
 // VADC handle
 IfxVadc_Adc vadc;
@@ -172,21 +172,13 @@ void Appli_AdcDemo_Queued(void)
 
 
 
-	ConsolePrint("CH0 :");
-	ShortToAscii(resultTrace[1].B.RESULT, str_adc);  //str_adc[10] = '\0';
-	ConsolePrint(str_adc);
+	printf("CH0 :%u\tCH1 :%u\tCH2 :%u\n",
+			resultTrace[0].B.RESULT,
+			resultTrace[1].B.RESULT,
+			resultTrace[2].B.RESULT);
 
-	ConsolePrint("\tCH1 :");
-	ShortToAscii(resultTrace[2].B.RESULT, str_adc);  //str_adc[10] = '\0';
-	ConsolePrint(str_adc);
-
-	ConsolePrint("\tCH2 :");
-	ShortToAscii(resultTrace[0].B.RESULT, str_adc);  //str_adc[10] = '\0';
-	ConsolePrint(str_adc);
-	ConsolePrint("\r\n");
 	// stop the queue
 	IfxVadc_Adc_clearQueue(&adcGroup);
-
 
 	// check results in buffer
 	// ...
@@ -218,27 +210,27 @@ void Appli_AdcDemo_Scan(void)
 			resultTrace[chnIx] = conversionResult;
 		}
 
-		ConsolePrint("CH0 :");
+		printf("CH0 :");
 		ShortToAscii(resultTrace[0].B.RESULT, str_adc);  //str_adc[10] = '\0';
-		ConsolePrint(str_adc);
+		printf(str_adc);
 
-		ConsolePrint("\tCH1 :");
+		printf("\tCH1 :");
 		ShortToAscii(resultTrace[1].B.RESULT, str_adc);  //str_adc[10] = '\0';
-		ConsolePrint(str_adc);
+		printf(str_adc);
 
-		ConsolePrint("\tCH2 :");
+		printf("\tCH2 :");
 		ShortToAscii(resultTrace[2].B.RESULT, str_adc);  //str_adc[10] = '\0';
-		ConsolePrint(str_adc);
+		printf(str_adc);
 
-		ConsolePrint("\tCH3 :");
+		printf("\tCH3 :");
 		ShortToAscii(resultTrace[3].B.RESULT, str_adc);  //str_adc[10] = '\0';
-		ConsolePrint(str_adc);
+		printf(str_adc);
 
-		ConsolePrint("\tCH4 :");
+		printf("\tCH4 :");
 		ShortToAscii(resultTrace[4].B.RESULT, str_adc);  //str_adc[10] = '\0';
-		ConsolePrint(str_adc);
+		printf(str_adc);
 
-		ConsolePrint("\r\n");
+		printf("\r\n");
 	}
 }
 
@@ -269,15 +261,15 @@ void Appli_AdcDemo_Background(void)
 		resultTrace[chnIx] = conversionResult;
 	}
 
-	ConsolePrint("CH4 :");
+	printf("CH4 :");
 	ShortToAscii(resultTrace[0].B.RESULT, str_adc);  //str_adc[10] = '\0';
-	ConsolePrint(str_adc);
+	printf(str_adc);
 
-	ConsolePrint("\tCH5 :");
+	printf("\tCH5 :");
 	ShortToAscii(resultTrace[1].B.RESULT, str_adc);  //str_adc[10] = '\0';
-	ConsolePrint(str_adc);
+	printf(str_adc);
 
-	ConsolePrint("\r\n");
+	printf("\r\n");
 }
 
 void Appli_AdcCyclic(void)
