@@ -18,6 +18,240 @@
 #include "IfxAsclin_reg.h"
 #include <Asclin/Asc/IfxAsclin_Asc.h>
 #include <Stm/Std/IfxStm.h>
+#include <Dts/Dts/IfxDts_Dts.h>
+#include "Configuration.h"
+
+
+#include "Gtm/Tom/PwmHl/IfxGtm_Tom_PwmHl.h"
+
+/******************************************************************************/
+/*-----------------------------------Macros-----------------------------------*/
+/******************************************************************************/
+
+/******************************************************************************/
+/*--------------------------------Enumerations--------------------------------*/
+/******************************************************************************/
+#define IFX_INTPRIO_ASCLIN0_TX 1
+#define IFX_INTPRIO_ASCLIN0_RX 2
+#define IFX_INTPRIO_ASCLIN0_ER 3
+#define IFX_INTPRIO_SCHD_STM0_SR0  110
+#define ISR_PRIORITY_TIMER          111 /**< \brief Define the 1ms timer interrupt priority.  */
+
+#define ISR_PROVIDER_TIMER          IfxSrc_Tos_cpu0 /**< \brief Define the 1ms timer interrupt provider.  */
+#define INTERRUPT_TIMER             ISR_ASSIGN(ISR_PRIORITY_TIMER, ISR_PROVIDER_TIMER)                   /**< \brief Define the 1ms timer interrupt priority.  */
+
+uint32 system_tick_2 = 0;
+
+typedef enum
+{
+    GtmTomPwmHl_State_init = 0,
+    GtmTomPwmHl_State_off,
+	GtmTomPwmHl_State_duty0,
+	GtmTomPwmHl_State_duty30,
+	GtmTomPwmHl_State_duty31,
+	GtmTomPwmHl_State_duty32,
+	GtmTomPwmHl_State_duty33,
+	GtmTomPwmHl_State_duty34,
+	GtmTomPwmHl_State_duty35,
+	GtmTomPwmHl_State_duty36,
+	GtmTomPwmHl_State_duty37,
+	GtmTomPwmHl_State_duty38,
+	GtmTomPwmHl_State_duty39,
+	GtmTomPwmHl_State_duty40,
+	GtmTomPwmHl_State_duty41,
+	GtmTomPwmHl_State_duty42,
+	GtmTomPwmHl_State_duty43,
+	GtmTomPwmHl_State_duty44,
+	GtmTomPwmHl_State_duty45,
+	GtmTomPwmHl_State_duty46,
+	GtmTomPwmHl_State_duty47,
+	GtmTomPwmHl_State_duty48,
+	GtmTomPwmHl_State_duty49,
+	GtmTomPwmHl_State_duty50,
+	GtmTomPwmHl_State_duty51,
+	GtmTomPwmHl_State_duty52,
+	GtmTomPwmHl_State_duty53,
+	GtmTomPwmHl_State_duty54,
+	GtmTomPwmHl_State_duty55,
+	GtmTomPwmHl_State_duty56,
+	GtmTomPwmHl_State_duty57,
+	GtmTomPwmHl_State_duty58,
+	GtmTomPwmHl_State_duty59,
+	GtmTomPwmHl_State_duty60,
+	GtmTomPwmHl_State_duty61,
+	GtmTomPwmHl_State_duty62,
+	GtmTomPwmHl_State_duty63,
+	GtmTomPwmHl_State_duty64,
+	GtmTomPwmHl_State_duty65,
+	GtmTomPwmHl_State_duty66,
+	GtmTomPwmHl_State_duty67,
+	GtmTomPwmHl_State_duty68,
+	GtmTomPwmHl_State_duty69,
+	GtmTomPwmHl_State_duty70,
+    GtmTomPwmHl_State_duty100,
+    GtmTomPwmHl_State_count
+}GtmTomPwmHl_State;
+
+/******************************************************************************/
+/*-----------------------------Data Structures--------------------------------*/
+/******************************************************************************/
+
+/** \brief Application information */
+typedef struct
+{
+    struct
+    {
+        float32           gtmFreq;
+        float32           gtmGclkFreq;
+        float32           gtmCmuClk0Freq; /**< \brief CMU CLK 0 frequency*/
+        GtmTomPwmHl_State state;
+        Ifx_TickTime      stateDeadline;
+    }info;
+    struct
+    {
+        IfxGtm_Tom_Timer timer;        /**< \brief Timer driver */
+        IfxGtm_Tom_PwmHl pwm;
+    }drivers;
+    struct
+    {
+        uint32 slotTimer;
+    }isrCounter;
+}App_GtmTomPwmHl;
+
+/******************************************************************************/
+/*------------------------------Global variables------------------------------*/
+/******************************************************************************/
+
+App_GtmTomPwmHl g_GtmTomPwmHl;
+
+/******************************************************************************/
+/*-------------------------Function Prototypes--------------------------------*/
+/******************************************************************************/
+
+IFX_INTERRUPT(ISR_Timer, 0, ISR_PRIORITY_TIMER);
+
+/** \} */
+
+/** \} */
+
+/** \brief Handle 1ms interrupt.
+ *
+ * \isrProvider \ref ISR_PROVIDER_TIMER
+ * \isrPriority \ref ISR_PRIORITY_TIMER
+ *
+ */
+void ISR_Timer(void)
+{
+    IfxCpu_enableInterrupts();
+
+    IfxGtm_Tom_Timer_acknowledgeTimerIrq(&g_GtmTomPwmHl.drivers.timer);
+    g_GtmTomPwmHl.isrCounter.slotTimer++;
+
+    if (isDeadLine(g_GtmTomPwmHl.info.stateDeadline))
+    {
+        g_GtmTomPwmHl.info.stateDeadline = addTTime(g_GtmTomPwmHl.info.stateDeadline, TimeConst_10ns);
+        g_GtmTomPwmHl.info.state++;
+
+        if (g_GtmTomPwmHl.info.state >= GtmTomPwmHl_State_count)
+        {
+            g_GtmTomPwmHl.info.state = GtmTomPwmHl_State_off;
+        }
+    }
+
+    system_tick_2 ++;
+}
+
+void GtmTomPwmHl_initTimer(void)
+{
+    {   /* GTM TOM configuration */
+        IfxGtm_Tom_Timer_Config timerConfig;
+        IfxGtm_Tom_PwmHl_Config pwmHlConfig;
+
+        IfxGtm_Tom_Timer_initConfig(&timerConfig, &MODULE_GTM);
+        timerConfig.base.frequency                  = 2500;
+        timerConfig.base.isrPriority                = ISR_PRIORITY(INTERRUPT_TIMER);
+        timerConfig.base.isrProvider                = ISR_PROVIDER(INTERRUPT_TIMER);
+        timerConfig.base.minResolution              = (1.0 / timerConfig.base.frequency) / 1000;
+        timerConfig.base.trigger.enabled            = FALSE;
+        timerConfig.tom                             = IfxGtm_Tom_1;
+        timerConfig.timerChannel                    = IfxGtm_Tom_Ch_4;
+        timerConfig.clock                           = IfxGtm_Cmu_Clk_0;
+
+        timerConfig.triggerOut                      = &IfxGtm_TOM1_0_TOUT9_P00_0_OUT;
+        timerConfig.base.trigger.outputEnabled      = TRUE;
+        timerConfig.base.trigger.enabled            = TRUE;
+        timerConfig.base.trigger.triggerPoint       = 500;
+        timerConfig.base.trigger.risingEdgeAtPeriod = TRUE;
+
+        IfxGtm_Tom_Timer_init(&g_GtmTomPwmHl.drivers.timer, &timerConfig);
+
+        IfxGtm_Tom_PwmHl_initConfig(&pwmHlConfig);
+        IfxGtm_Tom_ToutMapP ccx[1]   = {&IfxGtm_TOM1_4_TOUT22_P33_0_OUT};
+        IfxGtm_Tom_ToutMapP coutx[1] = {&IfxGtm_TOM1_4_TOUT30_P33_8_OUT};
+        pwmHlConfig.timer                 = &g_GtmTomPwmHl.drivers.timer;
+        pwmHlConfig.tom                   = timerConfig.tom;
+        pwmHlConfig.base.deadtime         = 2e-6;
+        pwmHlConfig.base.minPulse         = 1e-6;
+        pwmHlConfig.base.channelCount     = 1;
+        pwmHlConfig.base.emergencyEnabled = FALSE;
+        pwmHlConfig.base.outputMode       = IfxPort_OutputMode_pushPull;
+        pwmHlConfig.base.outputDriver     = IfxPort_PadDriver_cmosAutomotiveSpeed1;
+        pwmHlConfig.base.ccxActiveState   = Ifx_ActiveState_high;
+        pwmHlConfig.base.coutxActiveState = Ifx_ActiveState_high;
+        pwmHlConfig.ccx                   = ccx;
+        pwmHlConfig.coutx                 = coutx;
+
+        IfxGtm_Tom_PwmHl_init(&g_GtmTomPwmHl.drivers.pwm, &pwmHlConfig);
+
+        IfxGtm_Tom_Timer_run(&g_GtmTomPwmHl.drivers.timer);
+    }
+
+    /* Set PWM duty */
+    IfxGtm_Tom_PwmHl *pwmHl = &g_GtmTomPwmHl.drivers.pwm;
+
+    IfxGtm_Tom_Timer *timer = &g_GtmTomPwmHl.drivers.timer;
+    Ifx_TimerValue    tOn[1];
+    /* Set 50% duty cycle, center aligned */
+    tOn[0] = IfxGtm_Tom_Timer_getPeriod(timer) / 2;
+    IfxGtm_Tom_Timer_disableUpdate(timer);
+    IfxGtm_Tom_PwmHl_setOnTime(pwmHl, &tOn[0]);
+    IfxGtm_Tom_Timer_applyUpdate(timer);
+}
+
+
+/** \brief Demo init API
+ *
+ * This function is called from main during initialization phase
+ */
+void GtmTomPwmHlDemo_init(void)
+{
+    /* disable interrupts */
+    boolean  interruptState = IfxCpu_disableInterrupts();
+
+    /** - GTM clocks */
+    Ifx_GTM *gtm = &MODULE_GTM;
+    g_GtmTomPwmHl.info.gtmFreq = IfxGtm_Cmu_getModuleFrequency(gtm);
+    IfxGtm_enable(gtm);
+
+    /* Set the global clock frequencies */
+    IfxGtm_Cmu_setGclkFrequency(gtm, g_GtmTomPwmHl.info.gtmFreq);
+    g_GtmTomPwmHl.info.gtmGclkFreq = IfxGtm_Cmu_getGclkFrequency(gtm);
+
+    IfxGtm_Cmu_setClkFrequency(gtm, IfxGtm_Cmu_Clk_0, g_GtmTomPwmHl.info.gtmGclkFreq);
+    g_GtmTomPwmHl.info.gtmCmuClk0Freq = IfxGtm_Cmu_getClkFrequency(gtm, IfxGtm_Cmu_Clk_0, TRUE);
+    g_GtmTomPwmHl.info.state          = GtmTomPwmHl_State_init;
+    g_GtmTomPwmHl.info.stateDeadline  = now();
+
+    /** - Initialise the GTM part */
+    GtmTomPwmHl_initTimer();
+
+    printf("Gtm Tom PwmHl is initialised\n");
+
+    /* enable interrupts again */
+    IfxCpu_restoreInterrupts(interruptState);
+
+    IfxGtm_Cmu_enableClocks(gtm, IFXGTM_CMU_CLKEN_FXCLK | IFXGTM_CMU_CLKEN_CLK0);
+}
 
 /* Simple timing loop */
 uint32 volatile DelayLoopCounter;
@@ -36,10 +270,6 @@ static uint8 ascRxBuffer[ASC_RX_BUFFER_SIZE+ sizeof(Ifx_Fifo) + 8];
 extern unsigned long SYSTEM_GetCpuClock(void);
 extern unsigned long SYSTEM_GetSysClock(void);
 extern unsigned long SYSTEM_GetStmClock(void);
-
-#define IFX_INTPRIO_ASCLIN0_TX 1
-#define IFX_INTPRIO_ASCLIN0_RX 2
-#define IFX_INTPRIO_ASCLIN0_ER 3
 
 IFX_INTERRUPT(asclin0TxISR, 0, IFX_INTPRIO_ASCLIN0_TX)
 {
@@ -71,9 +301,6 @@ IFX_INTERRUPT(schdSr0ISR, 0, IFX_INTPRIO_SCHD_STM0_SR0)
 
 void schd_init(void)
 {
-#ifndef	IFX_INTPRIO_SCHD_STM0_SR0
-	#define IFX_INTPRIO_SCHD_STM0_SR0  110
-#endif
 	schdstmSfr = &MODULE_STM0;
 	IfxStm_initCompareConfig(&schdstmConfig);
 
@@ -114,6 +341,26 @@ size_t write(int fd, const void *buffer, size_t count)
 	Ifx_SizeT tmpCnt = count;
 
 	IfxAsclin_Asc_write(&asc, buffer, &tmpCnt, TIME_INFINITE);
+
+	return tmpCnt;
+}
+
+/** \brief Demo init API
+ *
+ * This function is called from main during initialization phase
+ */
+void DtsBasicDemo_init(void)
+{
+    /* Get the default configuration */
+    IfxDts_Dts_Config dtsConfig;
+    IfxDts_Dts_initModuleConfig(&dtsConfig);
+
+    /* adapt the default configuration if required */
+    dtsConfig.lowerTemperatureLimit = -35; /* SMU alarm if temperature value is below this Celsius value */
+    dtsConfig.upperTemperatureLimit = 150; /* SMU alarm if temperature value is above this Celsius value */
+
+    /* Module initialisation */
+    IfxDts_Dts_initModule(&dtsConfig);
 }
 
 /* Main Program */
@@ -170,107 +417,83 @@ int core0_main (void)
     IfxScuWdt_disableSafetyWatchdog (IfxScuWdt_getSafetyWatchdogPassword ());
 
     /* Configure P33.8 P33.9 P33.10 P33.11 as an output */
-    IfxPort_setPinMode(&MODULE_P33, 8u, IfxPort_Mode_outputPushPullGeneral);
-    IfxPort_setPinPadDriver(&MODULE_P33, 8u, IfxPort_PadDriver_cmosAutomotiveSpeed1) ;
-    IfxPort_setPinMode(&MODULE_P33, 9u, IfxPort_Mode_outputPushPullGeneral);
-    IfxPort_setPinPadDriver(&MODULE_P33, 9u, IfxPort_PadDriver_cmosAutomotiveSpeed1) ;
-    IfxPort_setPinMode(&MODULE_P33, 10u, IfxPort_Mode_outputPushPullGeneral);
-    IfxPort_setPinPadDriver(&MODULE_P33, 10u, IfxPort_PadDriver_cmosAutomotiveSpeed1) ;
-    IfxPort_setPinMode(&MODULE_P33, 11u, IfxPort_Mode_outputPushPullGeneral);
-    IfxPort_setPinPadDriver(&MODULE_P33, 11u, IfxPort_PadDriver_cmosAutomotiveSpeed1) ;
+    Appli_GpioInit();
 
     /* Make the speaker click */
     /* Configure P33.0 as an output (speaker) */
-    IfxPort_setPinMode(&MODULE_P33, 0u, IfxPort_Mode_outputPushPullGeneral);
-    IfxPort_setPinPadDriver(&MODULE_P33, 0u, IfxPort_PadDriver_cmosAutomotiveSpeed1) ;
+//    IfxPort_setPinMode(&MODULE_P33, 0u, IfxPort_Mode_outputPushPullGeneral);
+//    IfxPort_setPinPadDriver(&MODULE_P33, 0u, IfxPort_PadDriver_cmosAutomotiveSpeed1) ;
 
-    endinitPw = IfxScuWdt_getCpuWatchdogPassword ();
-    IfxScuWdt_clearCpuEndinit (endinitPw);
+//    endinitPw = IfxScuWdt_getCpuWatchdogPassword ();
+//    IfxScuWdt_clearCpuEndinit (endinitPw);
 
-    /* Set Emergency Stop Function For P33.0 */
-    IfxPort_setESR(&MODULE_P33, 0u);
+//    /* Set Emergency Stop Function For P33.0 */
+//    IfxPort_setESR(&MODULE_P33, 0u);
 
     // Need to test this
-    SCU_PMSWCR0.B.TRISTEN = 1u;   /* Allow write to SCU_PMSWCR0.B.TRISTREQ */
-    SCU_PMSWCR0.B.TRISTREQ = 1u;  /* Emergency stop pins go tristate */
-    SCU_PMSWCR0.B.TRISTEN = 0u;   /* Disable write to SCU_PMSWCR0.B.TRISTREQ */
+//    SCU_PMSWCR0.B.TRISTEN = 1u;   /* Allow write to SCU_PMSWCR0.B.TRISTREQ */
+//    SCU_PMSWCR0.B.TRISTREQ = 1u;  /* Emergency stop pins go tristate */
+//    SCU_PMSWCR0.B.TRISTEN = 0u;   /* Disable write to SCU_PMSWCR0.B.TRISTREQ */
+//
+//    SCU_EMSR.B.POL = 1u;  /* Active low on P33.8 */
+//    SCU_EMSR.B.MODE = 1u;
+//    SCU_EMSR.B.PSEL = 0u; /* Use P33.8 as emergency stop trigger pin */
 
-    SCU_EMSR.B.POL = 1u;  /* Active low on P33.8 */
-    SCU_EMSR.B.MODE = 1u;
-    SCU_EMSR.B.PSEL = 0u; /* Use P33.8 as emergency stop trigger pin */
-
-    IfxScuWdt_setCpuEndinit (endinitPw);
+//    IfxScuWdt_setCpuEndinit (endinitPw);
 
     IfxCpu_Irq_installInterruptHandler(&asclin0TxISR, IFX_INTPRIO_ASCLIN0_TX);
     IfxCpu_Irq_installInterruptHandler(&asclin0RxISR, IFX_INTPRIO_ASCLIN0_RX);
     IfxCpu_Irq_installInterruptHandler(&asclin0ErISR, IFX_INTPRIO_ASCLIN0_ER);
+
+	IfxCpu_Irq_installInterruptHandler(&ISR_Timer, ISR_PRIORITY_TIMER);
+
+    //DTS Code
+    float32 temperature;
+
+    DtsBasicDemo_init();
+
     IfxCpu_enableInterrupts();
+
+    GtmTomPwmHlDemo_init();
 
     /* Endless loop */
     while (1u)
     {
-        /* Turn LED Off */
-//    	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_high);
-//    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_high);
-//    	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_high);
-//    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_high);
-<<<<<<< HEAD
+        /* start Sensor */
+        IfxDts_Dts_startSensor();
 
-=======
->>>>>>> 009e84c3c9b906356ccbca14c06e5d96616a64ff
+    	/* wait until a new result is available */
+    	while (IfxDts_Dts_isBusy())
+    	{}
+
+    	/* convert result to Celsius */
+    	temperature = IfxDts_Dts_getTemperatureCelsius();
     	boolean flag = IfxCpu_acquireMutex(&g_Asc0_Lock);
     	if (flag)
     	{
-    		printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
-    				IfxCpu_getCoreId(),
-					SYSTEM_GetCpuClock(),
-					SYSTEM_GetSysClock(),
-					SYSTEM_GetStmClock(),
-					__TRICORE_CORE__,
-					schd_GetTick()
-    		);
+//    		printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n"\
+//    				"DTS Temperature: %3.1f'C",
+//    				IfxCpu_getCoreId(),
+//					SYSTEM_GetCpuClock(),
+//					SYSTEM_GetSysClock(),
+//					SYSTEM_GetStmClock(),
+//					__TRICORE_CORE__,
+//					schd_GetTick(),
+//					temperature
+//    		);
+
+    		printf("%.2f %u %u\n", temperature, system_tick, system_tick_2);
 
     		IfxCpu_releaseMutex(&g_Asc0_Lock);
-<<<<<<< HEAD
-    		IfxPort_togglePin(&MODULE_P33, 0u);
     	}
     	else
     	{
     		wait(1000);
-=======
-        	/* Click speaker */
-        	IfxPort_togglePin(&MODULE_P33, 0u);
-//        	wait(100000);
-        	tmpTick = schd_GetTick();
-        	while((tmpTick+2*TEST_DELAY_MS) > schd_GetTick())
-        	{
-        		_nop();
-        	}
->>>>>>> 009e84c3c9b906356ccbca14c06e5d96616a64ff
     	}
 
-    	/* test delay */
-
-        /* Turn LED On */
-//    	IfxPort_setPinState(&MODULE_P33, 8u, IfxPort_State_low);
-//    	IfxPort_setPinState(&MODULE_P33, 9u, IfxPort_State_low);
-//    	IfxPort_setPinState(&MODULE_P33, 10u, IfxPort_State_low);
-//    	IfxPort_setPinState(&MODULE_P33, 11u, IfxPort_State_low);
-<<<<<<< HEAD
-=======
-
-    	/* test delay */
-//    	tmpTick = schd_GetTick();
-//    	while((tmpTick+TEST_DELAY_MS) > schd_GetTick())
-//    	{
-//    		_nop();
-//    	}
-//
-//    	/* Read Port 10.2 into a variable */
-//    	Port10_1_State = IfxPort_getPinState(&MODULE_P10, 10u);
->>>>>>> 009e84c3c9b906356ccbca14c06e5d96616a64ff
-
+    	wait(1000000);
     }
+
     return (1u);
 }
 

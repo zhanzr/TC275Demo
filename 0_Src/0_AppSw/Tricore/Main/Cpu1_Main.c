@@ -43,36 +43,28 @@ int core1_main (void)
     IfxScuWdt_disableCpuWatchdog (IfxScuWdt_getCpuWatchdogPassword ());
     while (1)
     {
-//    	/* test delay */
-//    	tmpTick = schd_GetTick();
-//    	while((tmpTick+TEST_DELAY_MS) > schd_GetTick())
-//    	{
-//    		_nop();
-//    	}
-    	boolean flag = IfxCpu_acquireMutex(&g_Asc0_Lock);
-    	if (flag){
-    		printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
-    				IfxCpu_getCoreId(),
-					SYSTEM_GetCpuClock(),
-					SYSTEM_GetSysClock(),
-					SYSTEM_GetStmClock(),
-					__TRICORE_CORE__,
-					schd_GetTick()
-    		);
-
-    		IfxCpu_releaseMutex(&g_Asc0_Lock);
-    		IfxPort_togglePin(&MODULE_P33, 8u);
-    		//        	wait(100000);
-    		tmpTick = schd_GetTick();
-    		while((tmpTick+3*TEST_DELAY_MS) > schd_GetTick())
-    		{
-    			_nop();
-    		}
+//    	IfxPort_togglePin(&MODULE_P33, 8u);
+     	IfxPort_togglePin(&MODULE_P33, 9u);
+   	/* test delay */
+    	tmpTick = schd_GetTick();
+//    	wait(TEST_DELAY_MS*20000);
+    	while((tmpTick+TEST_DELAY_MS) > schd_GetTick())
+    	{
+    		_nop();
     	}
-/*
-    	if ( demo_idx == CORE_DEMO_INT) 	Core_DemoRun(0, 1);
-    	else if ( demo_idx == CORE_DEMO_NO_INT) Core_DemoRun(0, 0);
-*/
+//    	boolean flag = IfxCpu_acquireMutex(&g_Asc0_Lock);
+//    	if (flag){
+//    		printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
+//    				IfxCpu_getCoreId(),
+//					SYSTEM_GetCpuClock(),
+//					SYSTEM_GetSysClock(),
+//					SYSTEM_GetStmClock(),
+//					__TRICORE_CORE__,
+//					schd_GetTick()
+//    		);
+//
+//    		IfxCpu_releaseMutex(&g_Asc0_Lock);
+//    	}
     }
     return (1);
 }

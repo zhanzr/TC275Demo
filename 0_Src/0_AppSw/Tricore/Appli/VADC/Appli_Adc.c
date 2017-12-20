@@ -146,14 +146,6 @@ void Appli_AdcInit(void)
 		Appli_AdcBackgroundInit();
 }
 
-void Appli_AdcDemoInit(void)
-{
-}
-
-void Appli_AdcDemoDeInit(void)
-{
-}
-
 void Appli_AdcDemo_Queued(void)
 {
 	int chnIx;
