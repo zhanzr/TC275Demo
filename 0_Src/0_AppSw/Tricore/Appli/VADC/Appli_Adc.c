@@ -1,5 +1,8 @@
+#include <Ifx_TypesReg.h>
 #include "Appli_Adc.h"
 #include "Tricore\Appli\Entry\Appli_Entry.h"
+
+#define	QUEUE_TEST_CH_N	4
 
 int adc_count;
 
@@ -10,6 +13,12 @@ IfxVadc_Adc_Group adcGroup;
 // create group config
 IfxVadc_Adc_GroupConfig adcGroupConfig;
 
+Ifx_VADC_RES resultTrace[QUEUE_TEST_CH_N*10];
+Ifx_VADC_RES conversionResult;
+// create channel config
+IfxVadc_Adc_ChannelConfig adcChannelConfig[QUEUE_TEST_CH_N];
+IfxVadc_Adc_Channel adcChannel[QUEUE_TEST_CH_N];
+
 extern int demo_item;
 
 void Appli_AdcModule_Init(void)
@@ -18,13 +27,11 @@ void Appli_AdcModule_Init(void)
 	IfxVadc_Adc_initModuleConfig(&adcConfig, &MODULE_VADC);
 
 	// initialize module
-	// IfxVadc_Adc vadc; // declared globally
 	IfxVadc_Adc_initModule(&vadc, &adcConfig);
 
 	IfxVadc_Adc_initGroupConfig(&adcGroupConfig, &vadc);
 
-	// change group (default is GroupId_0, change to GroupId_7)
-	adcGroupConfig.groupId = IfxVadc_GroupId_7;
+	adcGroupConfig.groupId = IfxVadc_GroupId_0;
 	// IMPORTANT: usually we use the same group as master!
 	adcGroupConfig.master = adcGroupConfig.groupId;
 	// enable all arbiter request sources
@@ -43,12 +50,6 @@ void Appli_AdcModule_Init(void)
 	IfxVadc_Adc_initGroup(&adcGroup, &adcGroupConfig);
 }
 
-Ifx_VADC_RES resultTrace[5*10];
-Ifx_VADC_RES conversionResult;
-// create channel config
-IfxVadc_Adc_ChannelConfig adcChannelConfig[5];
-IfxVadc_Adc_Channel adcChannel[5];
-
 void Appli_AdcQueuedInit(void)
 {
 	int chnIx;
@@ -58,7 +59,7 @@ void Appli_AdcQueuedInit(void)
 	unsigned int savedGate = adcGroup.module.vadc->G[adcGroup.groupId].QMR0.B.ENGT;
 	adcGroup.module.vadc->G[adcGroup.groupId].QMR0.B.ENGT = 0;
 
-	for(chnIx = 0 ; chnIx < 3; ++chnIx)
+	for(chnIx = 0 ; chnIx < QUEUE_TEST_CH_N; ++chnIx)
 	{
 		IfxVadc_Adc_initChannelConfig(&adcChannelConfig[chnIx], &adcGroup);
 		adcChannelConfig[chnIx].channelId = (IfxVadc_ChannelId)(chnIx);
@@ -93,11 +94,12 @@ void Appli_AdcScanInit(void)
 
 	{
 		// create channel config
-		for(chnIx = 0; chnIx < 5; ++chnIx)
+		for(chnIx = 0; chnIx < QUEUE_TEST_CH_N; ++chnIx)
 		{
 			IfxVadc_Adc_initChannelConfig(&adcChannelConfig[chnIx], &adcGroup);
 			adcChannelConfig[chnIx].channelId = (IfxVadc_ChannelId)(chnIx);
-			adcChannelConfig[chnIx].resultRegister = (IfxVadc_ChannelResult)(chnIx); 	// use dedicated result register
+			adcChannelConfig[chnIx].resultRegister = (IfxVadc_ChannelResult)(chnIx);
+			// use dedicated result register
 
 			// initialize the channel
 			IfxVadc_Adc_initChannel(&adcChannel[chnIx], &adcChannelConfig[chnIx]);
@@ -118,8 +120,9 @@ void Appli_AdcBackgroundInit(void)
 	{
 		IfxVadc_Adc_initChannelConfig(&adcChannelConfig[chnIx], &adcGroup);
 
-		adcChannelConfig[chnIx].channelId = (IfxVadc_ChannelId)(chnIx + 4);
-		adcChannelConfig[chnIx].resultRegister = (IfxVadc_ChannelResult)(4 + chnIx);		// use register #4 and 5 for results
+		adcChannelConfig[chnIx].channelId = (IfxVadc_ChannelId)(chnIx + 2);
+		adcChannelConfig[chnIx].resultRegister = (IfxVadc_ChannelResult)(2 + chnIx);
+		// use register #2 and 3 for results
 		adcChannelConfig[chnIx].backgroundChannel = TRUE;
 
 		// initialize the channel
@@ -150,16 +153,18 @@ void Appli_AdcDemo_Queued(void)
 {
 	int chnIx;
 	Ifx_VADC_RES conversionResult;
-	char str_adc[10];
 
 	Appli_AdcQueuedInit();
 
 	// start the Queue
-	IfxVadc_Adc_startQueue(&adcGroup); 	// just for the case that somebody copy&pastes the code - the queue has already been started in previous test
+	IfxVadc_Adc_startQueue(&adcGroup);
+	// just for the case that somebody copy&pastes the code -
+	//the queue has already been started in previous test
 
-	// get 10 results for all 3 channels and store in temporary buffer
-	// (the usage of a buffer is required, since the print statements used by the checks take more time than the conversions)
-	for(chnIx = 0; chnIx < 3; ++chnIx)
+	// get 10 results for all channels and store in temporary buffer
+	// (the usage of a buffer is required, since the print statements used by the checks take
+	// more time than the conversions)
+	for(chnIx = 0; chnIx < QUEUE_TEST_CH_N; ++chnIx)
 	{
 		do {
 			conversionResult = IfxVadc_Adc_getResult(&adcChannel[chnIx]);
@@ -169,13 +174,18 @@ void Appli_AdcDemo_Queued(void)
 		resultTrace[chnIx] = conversionResult;
 
 	}
+	printf("%u\r\n",
+			resultTrace[3].B.RESULT);
+//	printf("%u\t%u\t%u\t%u\r\n",
+//			resultTrace[0].B.RESULT,
+//			resultTrace[1].B.RESULT,
+//			resultTrace[2].B.RESULT,
+//			resultTrace[3].B.RESULT);
 
-
-
-	printf("CH0 :%u\tCH1 :%u\tCH2 :%u\n",
-			resultTrace[0].B.RESULT,
-			resultTrace[1].B.RESULT,
-			resultTrace[2].B.RESULT);
+//	printf("CH0 :%u\t", resultTrace[0].B.RESULT);
+//	printf("CH1 :%u\t", resultTrace[1].B.RESULT);
+//	printf("CH2 :%u\t", resultTrace[2].B.RESULT);
+//	printf("CH3 :%u\r\n", resultTrace[3].B.RESULT);
 
 	// stop the queue
 	IfxVadc_Adc_clearQueue(&adcGroup);
@@ -196,7 +206,7 @@ void Appli_AdcDemo_Scan(void)
 	IfxVadc_Adc_startScan(&adcGroup);
 	{
 		// check results
-		for(chnIx=0; chnIx<5; ++chnIx)
+		for(chnIx=0; chnIx<QUEUE_TEST_CH_N; ++chnIx)
 		{
 			grp_id = adcChannel[chnIx].group->groupId;
 			ch_id = adcChannel[chnIx].channel;
@@ -209,28 +219,15 @@ void Appli_AdcDemo_Scan(void)
 			// print result, check with expected value
 			resultTrace[chnIx] = conversionResult;
 		}
-
-		printf("CH0 :");
-		ShortToAscii(resultTrace[0].B.RESULT, str_adc);  //str_adc[10] = '\0';
-		printf(str_adc);
-
-		printf("\tCH1 :");
-		ShortToAscii(resultTrace[1].B.RESULT, str_adc);  //str_adc[10] = '\0';
-		printf(str_adc);
-
-		printf("\tCH2 :");
-		ShortToAscii(resultTrace[2].B.RESULT, str_adc);  //str_adc[10] = '\0';
-		printf(str_adc);
-
-		printf("\tCH3 :");
-		ShortToAscii(resultTrace[3].B.RESULT, str_adc);  //str_adc[10] = '\0';
-		printf(str_adc);
-
-		printf("\tCH4 :");
-		ShortToAscii(resultTrace[4].B.RESULT, str_adc);  //str_adc[10] = '\0';
-		printf(str_adc);
-
-		printf("\r\n");
+		printf("%u\t%u\t%u\t%u\r\n",
+				resultTrace[0].B.RESULT,
+				resultTrace[1].B.RESULT,
+				resultTrace[2].B.RESULT,
+				resultTrace[3].B.RESULT);
+//		printf("CH0 :%u\t", resultTrace[0].B.RESULT);
+//		printf("CH1 :%u\t", resultTrace[1].B.RESULT);
+//		printf("CH2 :%u\t", resultTrace[2].B.RESULT);
+//		printf("CH3 :%u\r\n", resultTrace[3].B.RESULT);
 	}
 }
 
@@ -261,31 +258,30 @@ void Appli_AdcDemo_Background(void)
 		resultTrace[chnIx] = conversionResult;
 	}
 
-	printf("CH4 :");
-	ShortToAscii(resultTrace[0].B.RESULT, str_adc);  //str_adc[10] = '\0';
-	printf(str_adc);
-
-	printf("\tCH5 :");
-	ShortToAscii(resultTrace[1].B.RESULT, str_adc);  //str_adc[10] = '\0';
-	printf(str_adc);
-
-	printf("\r\n");
+	printf("CH2 :%u\t", resultTrace[0].B.RESULT);
+	printf("CH2 :%u\r\n", resultTrace[1].B.RESULT);
 }
 
 void Appli_AdcCyclic(void)
 {
 	adc_count++;
 
-	if(adc_count > 500)
+	if(adc_count > 2)
 	{
 		adc_count = 0;
 
 		if(demo_item == 1)
+		{
 			Appli_AdcDemo_Queued();
+		}
 		else if(demo_item == 2)
+		{
 			Appli_AdcDemo_Scan();
+		}
 		else if(demo_item == 3)
+		{
 			Appli_AdcDemo_Background();
+		}
 	}
 }
 
