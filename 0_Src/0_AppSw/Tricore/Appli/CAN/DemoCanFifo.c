@@ -49,6 +49,7 @@ void CAN_MessagesFifoInit(void)
 
 void CAN_ReceiveFifo(void)
 {
+#ifdef DEMO_START_KIT
 	IfxMultican_Message rxMsg;
 	uint32 wait_count = 1000;
 	uint32 i;
@@ -75,6 +76,7 @@ void CAN_ReceiveFifo(void)
 			rxMsg_fifo[i].data[1] = rxMsg.data[1];
 		}
 	}
+#endif
 }
 
 void CAN_SendFifo(void)

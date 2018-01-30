@@ -21,7 +21,7 @@
 #include <Dts/Dts/IfxDts_Dts.h>
 #include "Configuration.h"
 
-
+#include "Appli/CAN/MCanDemoEntry.h"
 #include "Gtm/Tom/PwmHl/IfxGtm_Tom_PwmHl.h"
 
 /******************************************************************************/
@@ -370,6 +370,8 @@ int core0_main (void)
 {
 	uint32 endinitPw;
 	uint32_t tmpTick;
+	uint32 sys_count = 0, new_count = 0;
+	uint32 back_count = 0;
 
 	IfxAsclin_Asc_Config ascConfig;
 	IfxAsclin_Asc_initModuleConfig(&ascConfig, &MODULE_ASCLIN0);
@@ -458,12 +460,15 @@ int core0_main (void)
 
     GtmTomPwmHlDemo_init();
 
-    demo_item = 1;
-    Appli_AdcInit();
-	printf("VADC Demo %u\n", demo_item);
+//    demo_item = CAN_DEMO_SINGLE;
+//    demo_item = CAN_DEMO_FIFO;
+    demo_item = CAN_DEMO_CANFD;
+//    Appli_AdcInit();
+	CAN_DemoInit(demo_item);
+	printf("CAN Demo %u\n", demo_item);
 
     /* Endless loop */
-    while (1u)
+    while (1)
     {
         /* start Sensor */
         IfxDts_Dts_startSensor();
@@ -488,7 +493,7 @@ int core0_main (void)
 //					temperature
 //    		);
 
-    		//printf("%.2f %u %u\n", temperature, system_tick, system_tick_2);
+    		printf("%.2f\n", temperature);
 
     		IfxCpu_releaseMutex(&g_Asc0_Lock);
     	}
@@ -497,9 +502,23 @@ int core0_main (void)
     		wait(1000);
     	}
 
-    	Appli_AdcCyclic();
+//    	Appli_AdcCyclic();
+    	wait(10000000);
+    	CAN_DemoRun(demo_item);
+    	wait(10000000);
 
-    	wait(1000000);
+//     	CAN_DemoInit(CAN_DEMO_FIFO);
+//    	wait(100000000);
+//    	wait(100000000);
+//     	wait(100000000);
+//    	CAN_DemoRun(CAN_DEMO_FIFO);
+//
+//    	wait(100000000);
+//    	CAN_DemoInit(CAN_DEMO_CANFD);
+//    	wait(100000000);
+//    	wait(100000000);
+//     	wait(100000000);
+//    	CAN_DemoRun(CAN_DEMO_CANFD);
     }
 
     return (1u);

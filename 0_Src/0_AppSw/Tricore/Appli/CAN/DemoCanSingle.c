@@ -46,6 +46,7 @@ void CAN_MessagesInit(void)
 
 void CAN_ReceiveSingle(uint32 id, uint32 *p_high, uint32 *p_low)
 {
+#ifdef DEMO_START_KIT
 	uint32 wait_count = 1000;
 	// Receiving Data
 	// Initialise the message structure with dummy values, will be replaced by the received values
@@ -64,6 +65,7 @@ void CAN_ReceiveSingle(uint32 id, uint32 *p_high, uint32 *p_low)
 		*p_high = rxMsg.data[0];
 		*p_low = rxMsg.data[1];
 	}
+#endif
 }
 
 void CAN_SendSingle(uint32 id, uint32 high, uint32 low)
@@ -72,8 +74,21 @@ void CAN_SendSingle(uint32 id, uint32 high, uint32 low)
 	IfxMultican_Message txMsg;
 	IfxMultican_Message_init(&txMsg, id, low, high, IfxMultican_DataLengthCode_8);
 
+	uint32_t timeout_cnt = 0;
 	// Transmit Data
-	while( IfxMultican_Can_MsgObj_sendMessage(&canSrcMsgObj, &txMsg) == IfxMultican_Status_notSentBusy );
+	printf("P1\t");
+	while( IfxMultican_Can_MsgObj_sendMessage(&canSrcMsgObj, &txMsg) == IfxMultican_Status_notSentBusy )
+	{
+		printf("P2\t");
+		printf("Busy\t");
+		timeout_cnt++;
+		if(timeout_cnt>=10)
+		{
+			printf("Timeout\n");
+			break;
+		}
+	}
+	printf("P3\t");
 }
 
 void CAN_CanSendCyclic(void)

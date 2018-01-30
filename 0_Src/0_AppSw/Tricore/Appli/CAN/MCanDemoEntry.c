@@ -15,7 +15,7 @@ IfxMultican_Can_MsgObj canDstMsgObj;
 #endif
 
 const uint32 msg_id = 0x100;
-static uint32 demo_can_count = 0;
+static uint32 demo_can_count;
 
 void CAN_ModuleInit(void)
 {
@@ -24,7 +24,6 @@ void CAN_ModuleInit(void)
 	IfxMultican_Can_initModuleConfig(&canConfig, &MODULE_CAN);
 
 	// initialize module
-	// IfxMultican_Can can_module; // defined globally
 	IfxMultican_Can_initModule(&can_module, &canConfig);
 }
 
@@ -33,7 +32,7 @@ void CAN_NodesInit(void)
 	// create CAN node config
 	IfxMultican_Can_NodeConfig canNodeConfig;
 	IfxMultican_Can_Node_initConfig(&canNodeConfig, &can_module);
-	canNodeConfig.baudrate = 1000000; // 1 MBaud
+	canNodeConfig.baudrate = CAN_DEMO_BAUD;
 
 	// Source Node
 	// IfxMultican_Can_Node canSrcNode; // defined globally
@@ -69,10 +68,9 @@ void CANFD_NodesInit(void)
 	// create CAN node config
 	IfxMultican_Can_NodeConfig canNodeConfig;
 
-	// Source Node// IfxMultican_Can_Node canSrcNode; // defined globally
 	{
 		IfxMultican_Can_Node_initConfig(&canNodeConfig, &can_module);
-		canNodeConfig.baudrate = 2000000; // 2 MBaud
+		canNodeConfig.baudrate = CAN_DEMO_BAUD;
 		canNodeConfig.nodeId = IfxMultican_NodeId_0;
 		canNodeConfig.rxPin = &IfxMultican_RXD0B_P20_7_IN;
 		canNodeConfig.rxPinMode = IfxPort_InputMode_pullUp;
@@ -94,7 +92,7 @@ void CANFD_NodesInit(void)
 		// initialise the node
 		IfxMultican_Can_Node_init(&canSrcNode, &canNodeConfig);
 	}
-
+#ifdef DEMO_START_KIT
 	// Destination Node// IfxMultican_Can_Node canDstNode; // defined globally
 	{
 		IfxMultican_Can_Node_initConfig(&canNodeConfig, &can_module);
@@ -120,6 +118,7 @@ void CANFD_NodesInit(void)
 		// initialise the node
 		IfxMultican_Can_Node_init(&canDstNode, &canNodeConfig);
 	}
+#endif
 }
 
 void CAN_DeInit(void)
@@ -129,29 +128,18 @@ void CAN_DeInit(void)
 
 void CAN_PrintMessage(uint32 id, uint32 *p_data, uint8 length)
 {
-	char   cout[20];
-/*
+	printf("Id: %u\t, Data: ", id);
 
-	backUart_Write("Id: ", 0);
-	memset(&cout[0], 0, sizeof(cout));
-	uint2string(id, &cout[0]);
-	backUart_Write(cout, 0);
-
-	backUart_Write(", Data: ", 0);
 	uint8 i;
 	for(i = 0; i < length; i++)
 	{
-		memset(&cout[0], 0, sizeof(cout));
-		uint2string(*p_data++, &cout[0]);
-		backUart_Write(cout, 0);
-		backUart_Write(", ", 0);
+		printf("%u,", *p_data++);
 	}
 
-	backUart_Write("\r\n",0);
-*/
+	printf("\r\n",0);
 }
 
-void CAN_DemoInit(uint32 module, uint32 idx)
+void CAN_DemoInit(uint32 idx)
 {
 	if(idx == CAN_DEMO_SINGLE)
 	{
@@ -173,14 +161,15 @@ void CAN_DemoInit(uint32 module, uint32 idx)
 	}
 }
 
-void CAN_DemoDeInit(uint32 module, uint32 idx)
+void CAN_DemoDeInit(uint32 idx)
 {
 	CAN_DeInit();
 }
 
-void CAN_DemoRun(uint32 module, uint32 idx)
+void CAN_DemoRun(uint32 idx)
 {
 	demo_can_count++;
+
 	if(demo_can_count >= CAN_PRE_DIVDER)
 	{
 		demo_can_count = 0;
@@ -189,7 +178,9 @@ void CAN_DemoRun(uint32 module, uint32 idx)
 		else if(idx == CAN_DEMO_FIFO)
 			CAN_FifoCyclic();
 		else if(idx == CAN_DEMO_CANFD)
+		{
 			CANFD_Cyclic();
+		}
 	}
 }
 

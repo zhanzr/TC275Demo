@@ -1,13 +1,16 @@
 #ifndef DEMO_MULTICAN
 #define DEMO_MULTICAN
 
+#include <stdint.h>
 #include <Multican/Can/IfxMultican_Can.h>
 //#include "Appli/Back/demo_handler.h"
 
-#define DEMO_START_KIT 1
+//#define DEMO_START_KIT 0
+
+#define	CAN_DEMO_BAUD	1000000u
 
 #define CAN_PRE_DIVDER	 (1)
-#define CAN_DIVIDER_SINGLE  (50)
+#define CAN_DIVIDER_SINGLE  (2)
 #define CAN_DIVIDER_FIFO	(100)
 #define CAN_DIVIDER_CANFD	(50)
 
@@ -37,7 +40,6 @@ extern uint32 txData[16];
 void CAN_ModuleInit(void);
 void CAN_NodesInit(void);
 void CANFD_NodesInit(void);
-void CAN_Init(void);
 void CAN_DeInit(void);
 
 void CAN_MessagesInit(void);
@@ -54,9 +56,9 @@ void CANFD_Send(void);
 void CANFD_Cyclic(void);
 
 void CAN_PrintMessage(uint32 id, uint32 *p_data, uint8 length);
-void CAN_DemoInit(uint32 module, uint32 idx);
-void CAN_DemoDeInit(uint32 module, uint32 idx);
-void CAN_DemoRun(uint32 module, uint32 idx);
+void CAN_DemoInit(uint32 idx);
+void CAN_DemoDeInit( uint32 idx);
+void CAN_DemoRun(uint32 idx);
 
 #endif
 
