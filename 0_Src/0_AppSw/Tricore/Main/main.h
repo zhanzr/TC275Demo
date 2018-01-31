@@ -37,6 +37,8 @@ void back_init(void);
 void back_cyclic(void);
 void demo_cyclic(void);
 
+uint32 schd_GetTick(void);
+
 uint32 mcu_get_address(char *p_module, char *p_reg);
 
 #endif
