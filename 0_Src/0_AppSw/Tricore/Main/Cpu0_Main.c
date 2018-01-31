@@ -21,9 +21,9 @@
 #include <Dts/Dts/IfxDts_Dts.h>
 #include "Configuration.h"
 
-#include "Appli/CAN/MCanDemoEntry.h"
+//#include "Appli/CAN/MCanDemoEntry.h"
 #include "Gtm/Tom/PwmHl/IfxGtm_Tom_PwmHl.h"
-
+#include "CANTest.h"
 /******************************************************************************/
 /*-----------------------------------Macros-----------------------------------*/
 /******************************************************************************/
@@ -267,6 +267,12 @@ static uint8 ascTxBuffer[ASC_TX_BUFFER_SIZE+ sizeof(Ifx_Fifo) + 8];
 #define ASC_RX_BUFFER_SIZE 512
 static uint8 ascRxBuffer[ASC_RX_BUFFER_SIZE+ sizeof(Ifx_Fifo) + 8];
 
+Ifx_STM *schdstmSfr;
+IfxStm_CompareConfig schdstmConfig;
+uint32 system_tick = 0;
+//Die Temperature
+float32 g_DieTemp;
+
 extern int demo_item;
 
 extern unsigned long SYSTEM_GetCpuClock(void);
@@ -287,11 +293,6 @@ IFX_INTERRUPT(asclin0ErISR, 0, IFX_INTPRIO_ASCLIN0_ER)
 {
 	IfxAsclin_Asc_isrError(&asc);
 }
-
-
-Ifx_STM *schdstmSfr;
-IfxStm_CompareConfig schdstmConfig;
-uint32 system_tick = 0;
 
 IFX_INTERRUPT(schdSr0ISR, 0, IFX_INTPRIO_SCHD_STM0_SR0)
 {
@@ -358,8 +359,8 @@ void DtsBasicDemo_init(void)
     IfxDts_Dts_initModuleConfig(&dtsConfig);
 
     /* adapt the default configuration if required */
-    dtsConfig.lowerTemperatureLimit = -35; /* SMU alarm if temperature value is below this Celsius value */
-    dtsConfig.upperTemperatureLimit = 150; /* SMU alarm if temperature value is above this Celsius value */
+    dtsConfig.lowerTemperatureLimit = -35; /* SMU alarm if g_DieTemp value is below this Celsius value */
+    dtsConfig.upperTemperatureLimit = 150; /* SMU alarm if g_DieTemp value is above this Celsius value */
 
     /* Module initialisation */
     IfxDts_Dts_initModule(&dtsConfig);
@@ -451,9 +452,6 @@ int core0_main (void)
 
 	IfxCpu_Irq_installInterruptHandler(&ISR_Timer, ISR_PRIORITY_TIMER);
 
-    //DTS Code
-    float32 temperature;
-
     DtsBasicDemo_init();
 
     IfxCpu_enableInterrupts();
@@ -462,9 +460,9 @@ int core0_main (void)
 
 //    demo_item = CAN_DEMO_SINGLE;
 //    demo_item = CAN_DEMO_FIFO;
-    demo_item = CAN_DEMO_CANFD;
+//    demo_item = CAN_DEMO_CANFD;
 //    Appli_AdcInit();
-	CAN_DemoInit(demo_item);
+    CAN_Init();
 	printf("CAN Demo %u\n", demo_item);
 
     /* Endless loop */
@@ -478,7 +476,7 @@ int core0_main (void)
     	{}
 
     	/* convert result to Celsius */
-    	temperature = IfxDts_Dts_getTemperatureCelsius();
+    	g_DieTemp = IfxDts_Dts_getTemperatureCelsius();
     	boolean flag = IfxCpu_acquireMutex(&g_Asc0_Lock);
     	if (flag)
     	{
@@ -490,10 +488,10 @@ int core0_main (void)
 //					SYSTEM_GetStmClock(),
 //					__TRICORE_CORE__,
 //					schd_GetTick(),
-//					temperature
+//					g_DieTemp
 //    		);
 
-    		printf("%.2f\n", temperature);
+    		printf("%.2f\n", g_DieTemp);
 
     		IfxCpu_releaseMutex(&g_Asc0_Lock);
     	}
@@ -503,22 +501,10 @@ int core0_main (void)
     	}
 
 //    	Appli_AdcCyclic();
-    	wait(10000000);
-    	CAN_DemoRun(demo_item);
-    	wait(10000000);
 
-//     	CAN_DemoInit(CAN_DEMO_FIFO);
-//    	wait(100000000);
-//    	wait(100000000);
-//     	wait(100000000);
-//    	CAN_DemoRun(CAN_DEMO_FIFO);
-//
-//    	wait(100000000);
-//    	CAN_DemoInit(CAN_DEMO_CANFD);
-//    	wait(100000000);
-//    	wait(100000000);
-//     	wait(100000000);
-//    	CAN_DemoRun(CAN_DEMO_CANFD);
+    	wait(10000000);
+    	CAN_TxdRcv();
+    	wait(10000000);
     }
 
     return (1u);
