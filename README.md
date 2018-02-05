@@ -1,5 +1,7 @@
 Demo for Infineon Aurix TC275 Chip.
 
-CAN Bus communication.
+LIN Bus communication.
 
-Could Send out and receive packet now with one node and two message objects.
+One board as master, another as slave.
+
+[Note:]Without a LIN bus protocol analysis tool, I can't verify the result of this demo.

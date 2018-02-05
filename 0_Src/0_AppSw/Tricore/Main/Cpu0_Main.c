@@ -21,9 +21,8 @@
 #include <Dts/Dts/IfxDts_Dts.h>
 #include "Configuration.h"
 
-//#include "Appli/CAN/MCanDemoEntry.h"
 #include "Gtm/Tom/PwmHl/IfxGtm_Tom_PwmHl.h"
-#include "CANTest.h"
+#include "LINTest.h"
 /******************************************************************************/
 /*-----------------------------------Macros-----------------------------------*/
 /******************************************************************************/
@@ -458,12 +457,15 @@ int core0_main (void)
 
     GtmTomPwmHlDemo_init();
 
-//    demo_item = CAN_DEMO_SINGLE;
-//    demo_item = CAN_DEMO_FIFO;
-//    demo_item = CAN_DEMO_CANFD;
 //    Appli_AdcInit();
-    CAN_Init();
-	printf("CAN Demo %u\n", demo_item);
+
+    LIN_Init();
+#ifdef	LIN_MASTER
+	printf("LIN Master Demo %u Hz\n", SYSTEM_GetCpuClock());
+#endif
+#ifdef	LIN_SLAVE
+	printf("LIN Slave Demo %u Hz\n", SYSTEM_GetCpuClock());
+#endif
 
     /* Endless loop */
     while (1)
@@ -500,10 +502,8 @@ int core0_main (void)
     		wait(1000);
     	}
 
-//    	Appli_AdcCyclic();
-
     	wait(10000000);
-    	CAN_TxdRcv();
+    	LIN_TxdRcv();
     	wait(10000000);
     }
 
