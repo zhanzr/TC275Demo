@@ -155,117 +155,117 @@ void Appli_Initlize(void)
 
 void Appli_ChangeMenu(int *p_menu, int *p_demo, char in)
 {
-	if(*p_menu == MENU_ITEM_MAIN)
-	{
-		if(in == '1')
-		{
-			*p_menu = MENU_ITEM_GPIO;
-			*p_demo = 0;
-			pDemoInit = Appli_GpioDemoInit;
-			pDemoCyclic = Appli_GpioCyclic;
-		}
-		else if(in == '2')
-		{
-			*p_menu = MENU_ITEM_STM;
-			*p_demo = 0;
-			pDemoInit = (typeDemoFunc *)0;
-			pDemoCyclic = Appli_StmCyclic;
-		}
-		else if(in == '3')
-		{
-			*p_menu = MENU_ITEM_ASCLIN;
-			*p_demo = 0;
-/*			pDemoInit = Appli_AsclinDemoInit;
-			pDemoCyclic = Appli_AsclinCyclic;*/
-		}
-		else if(in == '4')
-		{
-			*p_menu = MENU_ITEM_CCU6;
-			*p_demo = 0;
-			pDemoInit = Appli_Ccu6DemoInit;
-			pDemoCyclic = Appli_Ccu6Cyclic;
-		}
-		else if(in == '5')
-		{
-			*p_menu = MENU_ITEM_GPT;
-			*p_demo = 0;
-			pDemoInit = (typeDemoFunc *)0;;
-			pDemoCyclic = (typeDemoFunc *)0;;
-		}
-		else if(in == '6')
-		{
-			*p_menu = MENU_ITEM_ADC;
-			*p_demo = 0;
-			pDemoInit = Appli_AdcInit;
-			pDemoCyclic = Appli_AdcCyclic;
-		}
-		else if(in == '7')
-		{
-			*p_menu = MENU_ITEM_QSPI;
-			*p_demo = 0;
-/*			pDemoInit = Appli_QspiInit;
-			pDemoCyclic = Appli_QspiCyclic;*/
-		}
-		else if(in == '8')
-		{
-			*p_menu = MENU_ITEM_CAN;
-			*p_demo = 0;
-/*			pDemoInit = Appli_CanInit;
-			pDemoCyclic = Appli_CanCyclic;*/
-		}
-		else if(in == 'X')
-		{
-			*p_menu = MENU_ITEM_MAIN;
-			*p_demo = 0;
-			pDemoInit = (typeDemoFunc *)0;
-		}
-	}
-	else if(*p_menu > MENU_ITEM_MAIN && *p_menu < MENU_ITEM_NUM)
-	{
-		if(in >= '1' && in <= '9' && *p_demo == 0)
-		{
-			*p_demo = in - '0';
-			if(pDemoInit != (typeDemoFunc *)0)
-				pDemoInit();
-		}
-
-		if(in >= '0' && in <= '9' && *p_demo != 0)
-		{
-			demo_input = in - '0';
-		}
-		else if(in >= 'a' && in <= 'f' && *p_demo != 0)
-		{
-			demo_input = in - 'a' + 10;
-		}
-		else if(in >= 'A' && in <= 'F' && *p_demo != 0)
-		{
-			demo_input = in - 'a' + 10;
-		}
-		else if((in == 'X' || in == 'x') && *p_demo != 0)
-		{
-			if(*p_menu == MENU_ITEM_GPIO)
-/*				pDemoDeInit = Appli_GpioDemoDeInit;
-			else if(*p_menu == MENU_ITEM_ASCLIN)
-				pDemoDeInit = Appli_AsclinDemoDeInit;
-			else if(*p_menu == MENU_ITEM_STM)
-				pDemoDeInit = Appli_StmDemoDeInit;
-			else if(*p_menu == MENU_ITEM_CCU6)
-					pDemoDeInit = Appli_Ccu6DemoDeInit;
-
-			if(pDemoDeInit != (typeDemoFunc *)0)
-				pDemoDeInit();*/
-			*p_demo = 0;
-		}
-		else if((in == 'X' || in == 'x') && *p_demo == 0)
-		{
-			*p_demo = 0;
-			*p_menu = MENU_ITEM_MAIN;
-		}
-
-	}
-	else
-	{
-	}
+//	if(*p_menu == MENU_ITEM_MAIN)
+//	{
+//		if(in == '1')
+//		{
+//			*p_menu = MENU_ITEM_GPIO;
+//			*p_demo = 0;
+//			pDemoInit = Appli_GpioDemoInit;
+//			pDemoCyclic = Appli_GpioCyclic;
+//		}
+//		else if(in == '2')
+//		{
+//			*p_menu = MENU_ITEM_STM;
+//			*p_demo = 0;
+//			pDemoInit = (typeDemoFunc *)0;
+//			pDemoCyclic = Appli_StmCyclic;
+//		}
+//		else if(in == '3')
+//		{
+//			*p_menu = MENU_ITEM_ASCLIN;
+//			*p_demo = 0;
+///*			pDemoInit = Appli_AsclinDemoInit;
+//			pDemoCyclic = Appli_AsclinCyclic;*/
+//		}
+//		else if(in == '4')
+//		{
+//			*p_menu = MENU_ITEM_CCU6;
+//			*p_demo = 0;
+//			pDemoInit = Appli_Ccu6DemoInit;
+//			pDemoCyclic = Appli_Ccu6Cyclic;
+//		}
+//		else if(in == '5')
+//		{
+//			*p_menu = MENU_ITEM_GPT;
+//			*p_demo = 0;
+//			pDemoInit = (typeDemoFunc *)0;;
+//			pDemoCyclic = (typeDemoFunc *)0;;
+//		}
+//		else if(in == '6')
+//		{
+//			*p_menu = MENU_ITEM_ADC;
+//			*p_demo = 0;
+//			pDemoInit = Appli_AdcInit;
+//			pDemoCyclic = Appli_AdcCyclic;
+//		}
+//		else if(in == '7')
+//		{
+//			*p_menu = MENU_ITEM_QSPI;
+//			*p_demo = 0;
+///*			pDemoInit = Appli_QspiInit;
+//			pDemoCyclic = Appli_QspiCyclic;*/
+//		}
+//		else if(in == '8')
+//		{
+//			*p_menu = MENU_ITEM_CAN;
+//			*p_demo = 0;
+///*			pDemoInit = Appli_CanInit;
+//			pDemoCyclic = Appli_CanCyclic;*/
+//		}
+//		else if(in == 'X')
+//		{
+//			*p_menu = MENU_ITEM_MAIN;
+//			*p_demo = 0;
+//			pDemoInit = (typeDemoFunc *)0;
+//		}
+//	}
+//	else if(*p_menu > MENU_ITEM_MAIN && *p_menu < MENU_ITEM_NUM)
+//	{
+//		if(in >= '1' && in <= '9' && *p_demo == 0)
+//		{
+//			*p_demo = in - '0';
+//			if(pDemoInit != (typeDemoFunc *)0)
+//				pDemoInit();
+//		}
+//
+//		if(in >= '0' && in <= '9' && *p_demo != 0)
+//		{
+//			demo_input = in - '0';
+//		}
+//		else if(in >= 'a' && in <= 'f' && *p_demo != 0)
+//		{
+//			demo_input = in - 'a' + 10;
+//		}
+//		else if(in >= 'A' && in <= 'F' && *p_demo != 0)
+//		{
+//			demo_input = in - 'a' + 10;
+//		}
+//		else if((in == 'X' || in == 'x') && *p_demo != 0)
+//		{
+//			if(*p_menu == MENU_ITEM_GPIO)
+///*				pDemoDeInit = Appli_GpioDemoDeInit;
+//			else if(*p_menu == MENU_ITEM_ASCLIN)
+//				pDemoDeInit = Appli_AsclinDemoDeInit;
+//			else if(*p_menu == MENU_ITEM_STM)
+//				pDemoDeInit = Appli_StmDemoDeInit;
+//			else if(*p_menu == MENU_ITEM_CCU6)
+//					pDemoDeInit = Appli_Ccu6DemoDeInit;
+//
+//			if(pDemoDeInit != (typeDemoFunc *)0)
+//				pDemoDeInit();*/
+//			*p_demo = 0;
+//		}
+//		else if((in == 'X' || in == 'x') && *p_demo == 0)
+//		{
+//			*p_demo = 0;
+//			*p_menu = MENU_ITEM_MAIN;
+//		}
+//
+//	}
+//	else
+//	{
+//	}
 }
 
 void Appli_DispMenu(int menu, int demo)

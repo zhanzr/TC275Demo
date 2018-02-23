@@ -2,10 +2,8 @@
 #include <string.h>
 #include "Tricore\Appli\Entry\Appli_Entry.h"
 
-
-
 // used for PWM demo
-static IfxCcu6_TPwm tPwm;
+IfxCcu6_TPwm tPwm;
 
 // used for ICU
 static IfxCcu6_Icu icu;
@@ -63,7 +61,7 @@ void CCU6_TPwm_Initialize(uint8 duty)
 
 	// configure the selcted timer block
 	tPwmConfig.timer13.counterValue     = 0;
-	tPwmConfig.timer13.compareValue     = 50 * 10 ;   //50%
+	tPwmConfig.timer13.compareValue     = duty * 10 ;   //50->50%
 
 	// configure the syncronisation, in case of sync start with T12
 	tPwmConfig.timer13.t12SyncEvent     = IfxCcu6_T13TriggerEvent_onCC60RCompare;
@@ -114,81 +112,81 @@ void CCU6_Icu_Initialize(void)
 {
 	// ---- when not using inconjunction with Timer driver ---- //
 	// create configuration
-	IfxCcu6_Icu_Config icuConfig;
-	IfxCcu6_Icu_initModuleConfig(&icuConfig, &MODULE_CCU60);
-
-	// configure the frequency of the timer in case of internal start
-	icuConfig.frequency = 400000;
-
-	// configure the period of the timer
-	icuConfig.period = 100;
-
-	// configure the clock for internal mode
-	icuConfig.clock.extClockEnabled   = FALSE;
-	icuConfig.clock.extClockInput     = NULL_PTR;
-	icuConfig.clock.countingInputMode = IfxCcu6_CountingInputMode_internal;
-
-	// configure count operation
-	icuConfig.countMode     = IfxCcu6_T12CountMode_edgeAligned;
-	icuConfig.counterValue  = 0;
-
-	// initialize the module
-	IfxCcu6_Icu_initModule(&icu, &icuConfig);
-
-	// -------------------------------------------------------- //
-	// ---- when not using inconjunction with Timer driver ---- //
-	// after initialising the timer
-	IfxCcu6_Timer timer;
-	IfxCcu6_Timer_Config timerConfig;
-
-	// -------------------------------------------------------- //
-	// create Icu channel config
-	IfxCcu6_Icu_ChannelConfig icuChannelConfig;
-	IfxCcu6_Icu_initChannelConfig(&icuChannelConfig, &MODULE_CCU60);
-
-	// ---- when using inconjunction with Timer driver ---- //
-	icuChannelConfig.timer = timer;
-	// ---------------------------------------------------- //
-
-	// configure the channel
-	icuChannelConfig.channelId       = IfxCcu6_T12Channel_0;
-	icuChannelConfig.channelMode     = IfxCcu6_T12ChannelMode_doubleRegisterCaptureRising;
-
-	// configure the interrupts
-	icuChannelConfig.interrupt1.source = IfxCcu6_InterruptSource_cc60RisingEdge;
-	icuChannelConfig.interrupt1.serviceRequest  = IfxCcu6_ServiceRequest_2;
-	icuChannelConfig.interrupt1.priority        = IFX_INTPRIO_CCU6;
-	icuChannelConfig.interrupt1.typeOfService   = IfxSrc_Tos_cpu0;
-
-	// ---- when not using inconjunction with Timer driver ---- //
-	// configure input and output triggers
-	icuChannelConfig.trigger.extInputTrigger   = &IfxCcu60_T12HRB_P00_7_IN;
-	icuChannelConfig.trigger.extInputTriggerMode  = IfxCcu6_ExternalTriggerMode_risingEdge;
-
-	// -------------------------------------------------------- //
-	// pin configuration, in case of multi input capture mode select the respective CC6xIn and CCPOSxIn pins of the selected channel
-	const IfxCcu6_Icu_Pins pins = {
-			&IfxCcu60_CC60INA_P02_0_IN,  // CC60In pin
-			NULL,   // CC61In pin not used
-			NULL,   // CC62In pin not used
-			NULL,   // CCPOS0In pin not used
-			NULL,   // CCPOS1In pin not used
-			NULL,   // CCPOS2In pin not used
-			IfxPort_InputMode_pullUp,
-			IfxPort_InputMode_pullUp
-	};
-
-	icuChannelConfig.pins = &pins;
-
-	// configure multi input capture mode
-	icuChannelConfig.multiInputCaptureEnabled    = FALSE;
-
-	// initialize the channel
-	IfxCcu6_Icu_initChannel(&icuChannel, &icuChannelConfig);
-
-	// install interrupt handlers
-	IfxCpu_Irq_installInterruptHandler(&ccu60ISR_Icu, IFX_INTPRIO_CCU6);
-	IfxCpu_enableInterrupts();
+//	IfxCcu6_Icu_Config icuConfig;
+//	IfxCcu6_Icu_initModuleConfig(&icuConfig, &MODULE_CCU60);
+//
+//	// configure the frequency of the timer in case of internal start
+//	icuConfig.frequency = 400000;
+//
+//	// configure the period of the timer
+//	icuConfig.period = 100;
+//
+//	// configure the clock for internal mode
+//	icuConfig.clock.extClockEnabled   = FALSE;
+//	icuConfig.clock.extClockInput     = NULL_PTR;
+//	icuConfig.clock.countingInputMode = IfxCcu6_CountingInputMode_internal;
+//
+//	// configure count operation
+//	icuConfig.countMode     = IfxCcu6_T12CountMode_edgeAligned;
+//	icuConfig.counterValue  = 0;
+//
+//	// initialize the module
+//	IfxCcu6_Icu_initModule(&icu, &icuConfig);
+//
+//	// -------------------------------------------------------- //
+//	// ---- when not using inconjunction with Timer driver ---- //
+//	// after initialising the timer
+//	IfxCcu6_Timer timer;
+//	IfxCcu6_Timer_Config timerConfig;
+//
+//	// -------------------------------------------------------- //
+//	// create Icu channel config
+//	IfxCcu6_Icu_ChannelConfig icuChannelConfig;
+//	IfxCcu6_Icu_initChannelConfig(&icuChannelConfig, &MODULE_CCU60);
+//
+//	// ---- when using inconjunction with Timer driver ---- //
+//	icuChannelConfig.timer = timer;
+//	// ---------------------------------------------------- //
+//
+//	// configure the channel
+//	icuChannelConfig.channelId       = IfxCcu6_T12Channel_0;
+//	icuChannelConfig.channelMode     = IfxCcu6_T12ChannelMode_doubleRegisterCaptureRising;
+//
+//	// configure the interrupts
+//	icuChannelConfig.interrupt1.source = IfxCcu6_InterruptSource_cc60RisingEdge;
+//	icuChannelConfig.interrupt1.serviceRequest  = IfxCcu6_ServiceRequest_2;
+//	icuChannelConfig.interrupt1.priority        = IFX_INTPRIO_CCU6;
+//	icuChannelConfig.interrupt1.typeOfService   = IfxSrc_Tos_cpu0;
+//
+//	// ---- when not using inconjunction with Timer driver ---- //
+//	// configure input and output triggers
+//	icuChannelConfig.trigger.extInputTrigger   = &IfxCcu60_T12HRB_P00_7_IN;
+//	icuChannelConfig.trigger.extInputTriggerMode  = IfxCcu6_ExternalTriggerMode_risingEdge;
+//
+//	// -------------------------------------------------------- //
+//	// pin configuration, in case of multi input capture mode select the respective CC6xIn and CCPOSxIn pins of the selected channel
+//	const IfxCcu6_Icu_Pins pins = {
+//			&IfxCcu60_CC60INA_P02_0_IN,  // CC60In pin
+//			NULL,   // CC61In pin not used
+//			NULL,   // CC62In pin not used
+//			NULL,   // CCPOS0In pin not used
+//			NULL,   // CCPOS1In pin not used
+//			NULL,   // CCPOS2In pin not used
+//			IfxPort_InputMode_pullUp,
+//			IfxPort_InputMode_pullUp
+//	};
+//
+//	icuChannelConfig.pins = &pins;
+//
+//	// configure multi input capture mode
+//	icuChannelConfig.multiInputCaptureEnabled    = FALSE;
+//
+//	// initialize the channel
+//	IfxCcu6_Icu_initChannel(&icuChannel, &icuChannelConfig);
+//
+//	// install interrupt handlers
+//	IfxCpu_Irq_installInterruptHandler(&ccu60ISR_Icu, IFX_INTPRIO_CCU6);
+//	IfxCpu_enableInterrupts();
 }
 
 extern int demo_item;
