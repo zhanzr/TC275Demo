@@ -176,16 +176,16 @@ void Appli_AdcDemo_Queued(void)
 	}
 	printf("%u\r\n",
 			resultTrace[3].B.RESULT);
-//	printf("%u\t%u\t%u\t%u\r\n",
-//			resultTrace[0].B.RESULT,
-//			resultTrace[1].B.RESULT,
-//			resultTrace[2].B.RESULT,
-//			resultTrace[3].B.RESULT);
+	//	printf("%u\t%u\t%u\t%u\r\n",
+	//			resultTrace[0].B.RESULT,
+	//			resultTrace[1].B.RESULT,
+	//			resultTrace[2].B.RESULT,
+	//			resultTrace[3].B.RESULT);
 
-//	printf("CH0 :%u\t", resultTrace[0].B.RESULT);
-//	printf("CH1 :%u\t", resultTrace[1].B.RESULT);
-//	printf("CH2 :%u\t", resultTrace[2].B.RESULT);
-//	printf("CH3 :%u\r\n", resultTrace[3].B.RESULT);
+	//	printf("CH0 :%u\t", resultTrace[0].B.RESULT);
+	//	printf("CH1 :%u\t", resultTrace[1].B.RESULT);
+	//	printf("CH2 :%u\t", resultTrace[2].B.RESULT);
+	//	printf("CH3 :%u\r\n", resultTrace[3].B.RESULT);
 
 	// stop the queue
 	IfxVadc_Adc_clearQueue(&adcGroup);
@@ -224,10 +224,10 @@ void Appli_AdcDemo_Scan(void)
 				resultTrace[1].B.RESULT,
 				resultTrace[2].B.RESULT,
 				resultTrace[3].B.RESULT);
-//		printf("CH0 :%u\t", resultTrace[0].B.RESULT);
-//		printf("CH1 :%u\t", resultTrace[1].B.RESULT);
-//		printf("CH2 :%u\t", resultTrace[2].B.RESULT);
-//		printf("CH3 :%u\r\n", resultTrace[3].B.RESULT);
+		//		printf("CH0 :%u\t", resultTrace[0].B.RESULT);
+		//		printf("CH1 :%u\t", resultTrace[1].B.RESULT);
+		//		printf("CH2 :%u\t", resultTrace[2].B.RESULT);
+		//		printf("CH3 :%u\r\n", resultTrace[3].B.RESULT);
 	}
 }
 
