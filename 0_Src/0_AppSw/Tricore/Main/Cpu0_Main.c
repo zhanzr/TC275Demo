@@ -250,13 +250,15 @@ int core0_main (void)
 
     IfxCpu_enableInterrupts();
 
-	printf("LCD2004 Demo %u Hz\n", SYSTEM_GetCpuClock());
+	printf("CPU Perf Counter Demo %u Hz\n", SYSTEM_GetCpuClock());
 
-	LCD_Initialize();
-	LCD_displayL(0,0,line[0]);
-	LCD_displayL(1,0,line[1]);
-	LCD_displayL(2,0,line[2]);
-	LCD_displayL(3,0,line[3]);
+    IfxCpuPerfCounterDemo_init();
+
+//	LCD_Initialize();
+//	LCD_displayL(0,0,line[0]);
+//	LCD_displayL(1,0,line[1]);
+//	LCD_displayL(2,0,line[2]);
+//	LCD_displayL(3,0,line[3]);
 
     /* Endless loop */
     while (1)
@@ -292,6 +294,8 @@ int core0_main (void)
     	{
     		wait(1000);
     	}
+
+        IfxCpuPerfCounterDemo_run();
 
     	wait(20000000);
     }
