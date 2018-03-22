@@ -31,40 +31,37 @@
 
 extern IfxCpu_mutexLock g_Asc0_Lock;
 
+extern volatile int32_t g_share_i32;
+
 int core2_main (void)
 {
 	uint32_t tmpTick;
 
     IfxCpu_enableInterrupts();
-    /*
-     * !!WATCHDOG2 IS DISABLED HERE!!
-     * Enable the watchdog in the demo if it is required and also service the watchdog periodically
-     * */
+
     IfxScuWdt_disableCpuWatchdog (IfxScuWdt_getCpuWatchdogPassword ());
+
     while (1)
     {
     	IfxPort_togglePin(&MODULE_P33, 10u);
      	IfxPort_togglePin(&MODULE_P33, 11u);
-   	/* test delay */
+
     	tmpTick = schd_GetTick();
-//    	wait(TEST_DELAY_MS*40000);
     	while((tmpTick+TEST_DELAY_MS*2) > schd_GetTick())
     	{
     		_nop();
     	}
-//    	boolean flag = IfxCpu_acquireMutex(&g_Asc0_Lock);
-//    	if (flag){
-//    		printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
-//    				IfxCpu_getCoreId(),
-//					SYSTEM_GetCpuClock(),
-//					SYSTEM_GetSysClock(),
-//					SYSTEM_GetStmClock(),
-//					__TRICORE_CORE__,
-//					schd_GetTick()
-//    		);
-//
-//    		IfxCpu_releaseMutex(&g_Asc0_Lock);
-//    	}
+
+    	printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  Tick:%u\nshare_value:%d\n",
+    			IfxCpu_getCoreId(),
+				SYSTEM_GetCpuClock(),
+				SYSTEM_GetSysClock(),
+				SYSTEM_GetStmClock(),
+				__TRICORE_CORE__,
+				schd_GetTick(),
+				g_share_i32
+    	);
+
     }
     return (1);
 }

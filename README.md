@@ -1,3 +1,8 @@
 Demo for Infineon Aurix TC275 Chip.
 
-CCU6 PWM(T13) Demo.
+Core0: Add
+Core1: Substract
+Core2: Print out the result.
+
+Hardware mutex demo.
+

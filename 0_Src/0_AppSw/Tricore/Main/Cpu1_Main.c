@@ -26,10 +26,14 @@
 #include "IfxCpu.h"
 #include "Scu/Std/IfxScuWdt.h"
 #include "Port\Std\IfxPort.h"
+#include <Dts/Dts/IfxDts_Dts.h>
 #include "main.h"
-//#include "../Appli/BACK/demo_handler.h"
 
 extern IfxCpu_mutexLock g_Asc0_Lock;
+
+extern volatile int32_t g_share_i32;
+
+extern volatile float32 g_DieTemp;
 
 int core1_main (void)
 {
@@ -43,28 +47,34 @@ int core1_main (void)
     IfxScuWdt_disableCpuWatchdog (IfxScuWdt_getCpuWatchdogPassword ());
     while (1)
     {
-//    	IfxPort_togglePin(&MODULE_P33, 8u);
-     	IfxPort_togglePin(&MODULE_P33, 9u);
-   	/* test delay */
-    	tmpTick = schd_GetTick();
-//    	wait(TEST_DELAY_MS*20000);
-    	while((tmpTick+TEST_DELAY_MS) > schd_GetTick())
+//        /* start Sensor */
+//        IfxDts_Dts_startSensor();
+//
+//    	/* wait until a new result is available */
+//    	while (IfxDts_Dts_isBusy())
+//    	{}
+//
+//    	/* convert result to Celsius */
+//    	g_DieTemp = IfxDts_Dts_getTemperatureCelsius();
+    	while(IfxCpu_acquireMutex(&g_Asc0_Lock))
     	{
-    		_nop();
-    	}
-//    	boolean flag = IfxCpu_acquireMutex(&g_Asc0_Lock);
-//    	if (flag){
-//    		printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n",
+//    		printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n"\
+//    				"DTS Temperature: %3.1f'C",
 //    				IfxCpu_getCoreId(),
 //					SYSTEM_GetCpuClock(),
 //					SYSTEM_GetSysClock(),
 //					SYSTEM_GetStmClock(),
 //					__TRICORE_CORE__,
-//					schd_GetTick()
+//					schd_GetTick(),
+//					g_DieTemp
 //    		);
-//
-//    		IfxCpu_releaseMutex(&g_Asc0_Lock);
-//    	}
+//    		printf("%.2f\n", g_DieTemp);
+//    		g_share_i32 --;
+    		g_share_i32 ++;
+
+    		IfxCpu_releaseMutex(&g_Asc0_Lock);
+    	}
     }
+
     return (1);
 }

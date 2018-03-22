@@ -25,9 +25,9 @@
 //#include "Gtm/Tom/PwmHl/IfxGtm_Tom_PwmHl.h"
 #include "lcd2004.h"
 
-/******************************************************************************/
-/*-----------------------------------Macros-----------------------------------*/
-/******************************************************************************/
+extern unsigned long SYSTEM_GetCpuClock(void);
+extern unsigned long SYSTEM_GetSysClock(void);
+extern unsigned long SYSTEM_GetStmClock(void);
 
 /******************************************************************************/
 /*--------------------------------Enumerations--------------------------------*/
@@ -41,7 +41,7 @@
 #define ISR_PROVIDER_TIMER          IfxSrc_Tos_cpu0 /**< \brief Define the 1ms timer interrupt provider.  */
 #define INTERRUPT_TIMER             ISR_ASSIGN(ISR_PRIORITY_TIMER, ISR_PROVIDER_TIMER)                   /**< \brief Define the 1ms timer interrupt priority.  */
 
-uint32 system_tick_2 = 0;
+volatile int32_t g_share_i32;
 
 /* Simple timing loop */
 uint32 volatile DelayLoopCounter;
@@ -59,14 +59,10 @@ static uint8 ascRxBuffer[ASC_RX_BUFFER_SIZE+ sizeof(Ifx_Fifo) + 8];
 Ifx_STM *schdstmSfr;
 IfxStm_CompareConfig schdstmConfig;
 uint32 system_tick = 0;
-//Die Temperature
-float32 g_DieTemp;
+
+volatile float32 g_DieTemp;
 
 extern int demo_item;
-
-extern unsigned long SYSTEM_GetCpuClock(void);
-extern unsigned long SYSTEM_GetSysClock(void);
-extern unsigned long SYSTEM_GetStmClock(void);
 
 IFX_INTERRUPT(asclin0TxISR, 0, IFX_INTPRIO_ASCLIN0_TX)
 {
@@ -250,9 +246,9 @@ int core0_main (void)
 
     IfxCpu_enableInterrupts();
 
-	printf("CPU Perf Counter Demo %u Hz\n", SYSTEM_GetCpuClock());
+	printf("3 Core Atomic Operation Demo %u Hz\n", SYSTEM_GetCpuClock());
 
-    IfxCpuPerfCounterDemo_init();
+//    IfxCpuPerfCounterDemo_init();
 
 //	LCD_Initialize();
 //	LCD_displayL(0,0,line[0]);
@@ -263,17 +259,16 @@ int core0_main (void)
     /* Endless loop */
     while (1)
     {
-        /* start Sensor */
-        IfxDts_Dts_startSensor();
-
-    	/* wait until a new result is available */
-    	while (IfxDts_Dts_isBusy())
-    	{}
-
-    	/* convert result to Celsius */
-    	g_DieTemp = IfxDts_Dts_getTemperatureCelsius();
-    	boolean flag = IfxCpu_acquireMutex(&g_Asc0_Lock);
-    	if (flag)
+//        /* start Sensor */
+//        IfxDts_Dts_startSensor();
+//
+//    	/* wait until a new result is available */
+//    	while (IfxDts_Dts_isBusy())
+//    	{}
+//
+//    	/* convert result to Celsius */
+//    	g_DieTemp = IfxDts_Dts_getTemperatureCelsius();
+    	while(IfxCpu_acquireMutex(&g_Asc0_Lock))
     	{
 //    		printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n"\
 //    				"DTS Temperature: %3.1f'C",
@@ -285,19 +280,12 @@ int core0_main (void)
 //					schd_GetTick(),
 //					g_DieTemp
 //    		);
-
-    		printf("%.2f\n", g_DieTemp);
+//    		printf("%.2f\n", g_DieTemp);
+//    		g_share_i32 ++;
+    		g_share_i32 --;
 
     		IfxCpu_releaseMutex(&g_Asc0_Lock);
     	}
-    	else
-    	{
-    		wait(1000);
-    	}
-
-        IfxCpuPerfCounterDemo_run();
-
-    	wait(20000000);
     }
 
     return (1u);
