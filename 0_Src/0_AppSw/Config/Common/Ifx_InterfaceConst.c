@@ -28,17 +28,9 @@
 #include <Cpu/Std/Ifx_Types.h>
 #include "Configuration.h"
 
-
 #if defined(__GNUC__)
 #pragma section
 #pragma section ".interface_const"
-#endif
-#if defined(__TASKING__)
-#pragma section farrom "interface_const"
-#pragma protect
-#endif
-#if defined(__DCC__)
-#pragma section CONST ".interface_const" far-absolute R
 #endif
 
 #ifdef USE_TFT

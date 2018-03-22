@@ -56,17 +56,7 @@ typedef struct
 /*------------------------------Global variables------------------------------*/
 /******************************************************************************/
 IFX_EXTERN App_Cpu g_AppCpu0;
-
-#if defined(__DCC__)
-#pragma section DATA ".data_cpu1" ".bss_cpu1" far-absolute RW
-#endif
-
 IFX_EXTERN App_Cpu g_AppCpu1;
-
-#if defined(__DCC__)
-#pragma section DATA ".data_cpu2" ".bss_cpu2" far-absolute RW
-#endif
-
 IFX_EXTERN App_Cpu g_AppCpu2;
 
 #endif

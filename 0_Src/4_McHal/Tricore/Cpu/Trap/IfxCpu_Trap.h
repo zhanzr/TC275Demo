@@ -192,26 +192,6 @@ typedef struct
         __asm("ji\t %0" : : "a" (serviceRoutine)); \
         __asm("rfe");                              \
     }
-#elif defined(__DCC__)
-#define IfxCpu_Tsr_CallTSR(serviceRoutine)                  \
-    {                                                       \
-        __ALIGN_TRAP_TAB__;                                 \
-        __asm("\n#$$bp\n");                                 \
-        __asm("  movh.a\t %a15,"#serviceRoutine "@ha\n");   \
-        __asm("  lea\t %a15,[%a15]"#serviceRoutine "@l\n"); \
-        __asm("  mov\t %d4,%d15\n");                        \
-        __asm("  ji\t  %a15\n");                            \
-        __asm("  rfe");                                     \
-        __asm("#$$ep");                                     \
-    }
-#define __ALIGN_TRAP_TAB__ __asm(" .align 5");
-#elif defined(__TASKING__)
-#define IfxCpu_Tsr_CallTSR(serviceRoutine)                                              \
-    {                                                                                   \
-        __ALIGN_TRAP_TAB__;                                                             \
-        __asm("mov\td4,d15\n\tji\t%0\n\trfe\n" : : "a" (serviceRoutine) : "d4", "d15"); \
-    }
-#define __ALIGN_TRAP_TAB__ __asm(" .align 32");
 #endif
 
 /** \} */

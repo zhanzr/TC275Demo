@@ -27,17 +27,9 @@
 #define IFX_TYPESREG_H   1
 /******************************************************************************/
 
-#if defined(__TASKING__)
-#define Ifx_Strict_16Bit unsigned __sfrbit16
-#define Ifx_Strict_32Bit unsigned __sfrbit32
-#endif
 #if defined(__GNUC__)
 #define Ifx_Strict_16Bit volatile unsigned short
 #define Ifx_Strict_32Bit volatile unsigned int
-#endif
-#if defined(__DCC__)
-#define Ifx_Strict_16Bit unsigned short
-#define Ifx_Strict_32Bit unsigned int
 #endif
 
 /******************************************************************************/

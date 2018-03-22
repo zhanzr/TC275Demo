@@ -159,17 +159,8 @@ typedef enum
     Ifx_Pwm_Mode_count                      /**< \brief Number of defined modes */
 } Ifx_Pwm_Mode;
 
-#ifdef __DCC__
-#include "Ifx_TypesDcc.h"
-
-#elif defined(__TASKING__)
-#include "Ifx_TypesTasking.h"
-
-#elif defined(__GNUC__)
+#if defined(__GNUC__)
 #include "Ifx_TypesGnuc.h"
-
-#elif defined(__MSVC__)
-#include "Ifx_TypesMsvc.h"
 #else
 #error Unsupported compiler.
 #endif

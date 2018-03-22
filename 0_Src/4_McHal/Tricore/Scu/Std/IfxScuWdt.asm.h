@@ -66,36 +66,5 @@ IFX_INLINE uint16 IfxScuWdt_calculateLfsr(uint16 password)
 
 
 #endif
-#if defined(__TASKING__)
-IFX_INLINE uint16 IfxScuWdt_calculateLfsr(uint16 password)
-{
-    /* *INDENT-OFF* */
-    return (((password>>14)&1) ^ ((password>>13)&1) ^ ((password>>12)&1) ^ ((password>> 2)&1) ^ ((password>> 0)&1)) << 14 | ((password>> 1) & 0xBFFF);
-    /* *INDENT-ON* */
-}
-
-
-#endif
-#if defined(__DCC__)
-/* *INDENT-OFF* */
-asm uint32 IfxScuWdt_calculateLfsr_asm(uint16 password)
-{
-%reg password
-!"%d2"
-    xor.t %d2, password, 0, password, 2
-    xor.t %d2, %d2, 0, password, 12
-    xor.t %d2, %d2, 0, password, 13
-    xor.t %d2, %d2, 0, password, 14
-    sh password, -1
-    ins.t %d2, password, 14, %d2, 0
-}
-/* *INDENT-ON* */
-IFX_INLINE uint16 IfxScuWdt_calculateLfsr(uint16 password)
-{
-    return IfxScuWdt_calculateLfsr_asm(password);
-}
-
-
-#endif
 
 #endif

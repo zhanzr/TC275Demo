@@ -37,11 +37,7 @@
 #ifndef IFX_RDC_DSADC_H
 #define IFX_RDC_DSADC_H
 
-#ifndef __MSVC__
 #define IFXDSADC_HW_INIT 1
-#else
-#define IFXDSADC_HW_INIT 0
-#endif
 
 /*________________________________________________________________________________________
 // INCLUDE FILES */

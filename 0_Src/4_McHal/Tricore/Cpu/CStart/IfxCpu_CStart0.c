@@ -70,9 +70,6 @@ IFXCOMPILER_COMMON_LINKER_SYMBOLS()
 IFXCOMPILER_CORE_LINKER_SYMBOLS(0)
 
 IFX_EXTERN void core0_main(void);
-#if defined(__TASKING__)
-__asm("\t .extern core0_main");
-#endif
 
 /*******************************************************************************
 **                      Private Constant Definitions                          **
@@ -174,13 +171,6 @@ void _Core0_start(void)
 #pragma section
 #pragma section ".start" x
 #endif
-#if defined(__TASKING__)
-#pragma protect on
-#pragma section code "start"
-#endif
-#if defined(__DCC__)
-#pragma section CODE ".start" X
-#endif
 
 void _START(void)
 {
@@ -192,13 +182,6 @@ void _START(void)
 #if defined(__GNUC__)
 #pragma section
 #endif
-#if defined(__TASKING__)
-#pragma protect restore
-#pragma section code restore
-#endif
-#if defined(__DCC__)
-#pragma section CODE
-#endif
 
 /*******************************************************************************
 **                      Boot Mode Headers                                     **
@@ -208,13 +191,7 @@ void _START(void)
 #pragma section
 #pragma section ".bmhd_0" a
 #endif
-#if defined(__TASKING__)
-#pragma protect on
-#pragma section farrom "bmhd_0"
-#endif
-#if defined(__DCC__)
-#pragma section CONST ".bmhd_0" R
-#endif
+
 /** \brief Boot Mode Header 0
  * Boot mode header at memory location 0c8000 0000.
  */
@@ -233,26 +210,12 @@ const uint32 BootModeHeader_0[] = {
 #if defined(__GNUC__)
 #pragma section
 #endif
-#if defined(__TASKING__)
-#pragma protect restore
-#pragma section farrom restore
-#endif
-#if defined(__DCC__)
-#pragma section CONST
-#endif
 
 #ifndef IFX_CFG_CPUCSTART_BMI01_NOT_NEEDED
 /*Boot Mode Header 1 sections to inform linker to locate them at 0x8002 0000 */
 #if defined(__GNUC__)
 #pragma section
 #pragma section ".bmhd_1" a
-#endif
-#if defined(__TASKING__)
-#pragma protect on
-#pragma section farrom "bmhd_1"
-#endif
-#if defined(__DCC__)
-#pragma section CONST ".bmhd_1" R
 #endif
 
 /** \brief Boot Mode Header 1
@@ -273,13 +236,7 @@ const uint32 BootModeHeader_1[] = {
 #if defined(__GNUC__)
 #pragma section
 #endif
-#if defined(__TASKING__)
-#pragma protect restore
-#pragma section farrom restore
-#endif
-#if defined(__DCC__)
-#pragma section CONST
-#endif
+
 #endif /*IFX_CFG_CPUCSTART_BMI01_NOT_NEEDED*/
 
 #endif /*#ifndef IFX_CFG_USE_COMPILER_DEFAULT_LINKER */

@@ -198,14 +198,6 @@ void IfxCpu_Trap_nonMaskableInterrupt(uint32 tin)
 #pragma section
 #pragma section ".traptab_cpu0" awx
 #endif
-#if defined(__DCC__)
-#pragma section
-#pragma section CODE ".traptab_cpu0" X
-#endif
-#if defined(__TASKING__)
-#pragma protect on
-#pragma section code "traptab_cpu0"
-#endif
 
 void IfxCpu_Trap_vectorTable0(void)
 {
@@ -224,13 +216,6 @@ void IfxCpu_Trap_vectorTable0(void)
 #if defined(__GNUC__)
 #pragma section
 #pragma section ".traptab_cpu1" awx
-#endif
-#if defined(__DCC__)
-#pragma section
-#pragma section CODE ".traptab_cpu1" X
-#endif
-#if defined(__TASKING__)
-#pragma section code "traptab_cpu1"
 #endif
 
 void IfxCpu_Trap_vectorTable1(void)
@@ -253,13 +238,6 @@ void IfxCpu_Trap_vectorTable1(void)
 #pragma section
 #pragma section ".traptab_cpu2" awx
 #endif
-#if defined(__DCC__)
-#pragma section
-#pragma section CODE ".traptab_cpu2" X
-#endif
-#if defined(__TASKING__)
-#pragma section code "traptab_cpu2"
-#endif
 
 void IfxCpu_Trap_vectorTable2(void)
 {
@@ -280,13 +258,6 @@ void IfxCpu_Trap_vectorTable2(void)
 #if defined(__GNUC__)
 #pragma section
 #pragma section ".traptab_cpu3" awx
-#endif
-#if defined(__DCC__)
-#pragma section
-#pragma section CODE ".traptab_cpu3" X
-#endif
-#if defined(__TASKING__)
-#pragma section code "traptab_cpu3"
 #endif
 
 void IfxCpu_Trap_vectorTable3(void)
@@ -309,14 +280,6 @@ void IfxCpu_Trap_vectorTable3(void)
 #pragma section
 #pragma section ".traptab_cpu4" awx
 #endif
-#if defined(__DCC__)
-#pragma section
-#pragma section CODE ".traptab_cpu4" X
-#endif
-#if defined(__TASKING__)
-#pragma section code "traptab_cpu4"
-#endif
-
 void IfxCpu_Trap_vectorTable4(void)
 {
     IfxCpu_Tsr_CallTSR(IfxCpu_Trap_memoryManagementError);
@@ -337,13 +300,6 @@ void IfxCpu_Trap_vectorTable4(void)
 #pragma section
 #pragma section ".traptab_cpu5" awx
 #endif
-#if defined(__DCC__)
-#pragma section
-#pragma section CODE ".traptab_cpu5" X
-#endif
-#if defined(__TASKING__)
-#pragma section code "traptab_cpu5"
-#endif
 
 void IfxCpu_Trap_vectorTable5(void)
 {
@@ -363,12 +319,4 @@ void IfxCpu_Trap_vectorTable5(void)
 #if defined(__GNUC__)
 #pragma section
 #endif
-#if defined(__DCC__)
-#pragma section
-#endif
-#if defined(__DCC__)
-#pragma interrupt IfxInterruptEx
-#endif
-#if defined(__TASKING__)
-#pragma endprotect
-#endif
+

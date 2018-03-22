@@ -31,12 +31,6 @@
 #pragma section
 #pragma section ".interface_const"
 #endif
-#if defined(__TASKING__)
-#pragma section farrom "interface_const"
-#endif
-#if defined(__DCC__)
-#pragma section CONST ".interface_const" far-absolute R
-#endif
 
 const uint32 Ifx_interfaceConst[40] = {
     /*Address:80000040 */ 0x00000000,

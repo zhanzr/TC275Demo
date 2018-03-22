@@ -52,9 +52,6 @@ IFXCOMPILER_COMMON_LINKER_SYMBOLS()
 IFXCOMPILER_CORE_LINKER_SYMBOLS(2)
 
 IFX_EXTERN void core2_main(void);
-#if defined(__TASKING__)
-__asm("\t .extern core2_main");
-#endif
 /*******************************************************************************
 **                      Private Constant Definitions                          **
 *******************************************************************************/

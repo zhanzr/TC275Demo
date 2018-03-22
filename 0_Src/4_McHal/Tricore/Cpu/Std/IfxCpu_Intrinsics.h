@@ -29,15 +29,8 @@
 /******************************************************************************/
 #include "Ifx_Types.h"
 
-#if defined(__DCC__)
-#include "IfxCpu_IntrinsicsDcc.h"
-
-#elif defined(__GNUC__)
+#if defined(__GNUC__)
 #include "IfxCpu_IntrinsicsGnuc.h"
-
-#elif defined(__TASKING__)
-#include "IfxCpu_IntrinsicsTasking.h"
-
 #else
 #error Compiler unsupported
 #endif

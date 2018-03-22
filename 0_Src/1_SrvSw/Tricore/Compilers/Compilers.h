@@ -51,17 +51,8 @@
 #define CFG_LONG_SIZE_T (0)
 #endif
 
-#if defined(__DCC__)
-#include "CompilerDcc.h"
-
-#elif defined(__GNUC__)
+#if defined(__GNUC__)
 #include "CompilerGnuc.h"
-
-#elif defined(__TASKING__)
-#include "CompilerTasking.h"
-
-#elif defined(__MSVC__)
-#include "CompilerMsvc.h"
 
 #else
 
