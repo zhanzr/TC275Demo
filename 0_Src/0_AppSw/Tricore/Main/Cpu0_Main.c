@@ -154,13 +154,6 @@ void DtsBasicDemo_init(void)
 /* Main Program */
 int core0_main (void)
 {
-	uint8_t line[4][21]={
-		__DATE__,
-		__TIME__,
-		__FILE__,
-		"Tricore 1.6P"
-	};
-
 	uint32 endinitPw;
 	uint32_t tmpTick;
 	uint32 sys_count = 0, new_count = 0;
@@ -246,7 +239,7 @@ int core0_main (void)
 
     IfxCpu_enableInterrupts();
 
-	printf("3 Core Atomic Operation Demo %u Hz\n", SYSTEM_GetCpuClock());
+//	printf("3 Core Atomic Operation Demo %u Hz\n", SYSTEM_GetCpuClock());
 
 //    IfxCpuPerfCounterDemo_init();
 
@@ -259,30 +252,10 @@ int core0_main (void)
     /* Endless loop */
     while (1)
     {
-//        /* start Sensor */
-//        IfxDts_Dts_startSensor();
-//
-//    	/* wait until a new result is available */
-//    	while (IfxDts_Dts_isBusy())
-//    	{}
-//
-//    	/* convert result to Celsius */
-//    	g_DieTemp = IfxDts_Dts_getTemperatureCelsius();
     	while(IfxCpu_acquireMutex(&g_Asc0_Lock))
     	{
-//    		printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n"\
-//    				"DTS Temperature: %3.1f'C",
-//    				IfxCpu_getCoreId(),
-//					SYSTEM_GetCpuClock(),
-//					SYSTEM_GetSysClock(),
-//					SYSTEM_GetStmClock(),
-//					__TRICORE_CORE__,
-//					schd_GetTick(),
-//					g_DieTemp
-//    		);
-//    		printf("%.2f\n", g_DieTemp);
-//    		g_share_i32 ++;
     		g_share_i32 --;
+    		g_share_i32 ++;
 
     		IfxCpu_releaseMutex(&g_Asc0_Lock);
     	}

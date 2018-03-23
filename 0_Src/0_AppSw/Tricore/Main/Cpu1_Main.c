@@ -47,29 +47,9 @@ int core1_main (void)
     IfxScuWdt_disableCpuWatchdog (IfxScuWdt_getCpuWatchdogPassword ());
     while (1)
     {
-//        /* start Sensor */
-//        IfxDts_Dts_startSensor();
-//
-//    	/* wait until a new result is available */
-//    	while (IfxDts_Dts_isBusy())
-//    	{}
-//
-//    	/* convert result to Celsius */
-//    	g_DieTemp = IfxDts_Dts_getTemperatureCelsius();
     	while(IfxCpu_acquireMutex(&g_Asc0_Lock))
     	{
-//    		printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  %u\n"\
-//    				"DTS Temperature: %3.1f'C",
-//    				IfxCpu_getCoreId(),
-//					SYSTEM_GetCpuClock(),
-//					SYSTEM_GetSysClock(),
-//					SYSTEM_GetStmClock(),
-//					__TRICORE_CORE__,
-//					schd_GetTick(),
-//					g_DieTemp
-//    		);
-//    		printf("%.2f\n", g_DieTemp);
-//    		g_share_i32 --;
+    		g_share_i32 --;
     		g_share_i32 ++;
 
     		IfxCpu_releaseMutex(&g_Asc0_Lock);

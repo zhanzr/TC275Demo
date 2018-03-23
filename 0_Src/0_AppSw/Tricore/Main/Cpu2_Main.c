@@ -40,6 +40,15 @@ int core2_main (void)
     IfxCpu_enableInterrupts();
 
     IfxScuWdt_disableCpuWatchdog (IfxScuWdt_getCpuWatchdogPassword ());
+	printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  Tick:%u\n GCC:%d\n",
+			IfxCpu_getCoreId(),
+			SYSTEM_GetCpuClock(),
+			SYSTEM_GetSysClock(),
+			SYSTEM_GetStmClock(),
+			__TRICORE_CORE__,
+			schd_GetTick(),
+			__GNUC__
+		);
 
     while (1)
     {
@@ -47,21 +56,18 @@ int core2_main (void)
      	IfxPort_togglePin(&MODULE_P33, 11u);
 
     	tmpTick = schd_GetTick();
-    	while((tmpTick+TEST_DELAY_MS*2) > schd_GetTick())
+    	while((tmpTick+TEST_DELAY_MS) > schd_GetTick())
     	{
     		_nop();
     	}
 
-    	printf("Cpu%d:%u Hz, Sys:%u Hz, Stm:%u Hz, Core:%04X,  Tick:%u\nshare_value:%d\n",
-    			IfxCpu_getCoreId(),
-				SYSTEM_GetCpuClock(),
-				SYSTEM_GetSysClock(),
-				SYSTEM_GetStmClock(),
-				__TRICORE_CORE__,
-				schd_GetTick(),
-				g_share_i32
-    	);
-
+//    	while(IfxCpu_acquireMutex(&g_Asc0_Lock))
+    	{
+    		printf("Cpu%d, The Value:%i\n",
+    				IfxCpu_getCoreId(),
+					g_share_i32);
+//    		IfxCpu_releaseMutex(&g_Asc0_Lock);
+    	}
     }
     return (1);
 }
