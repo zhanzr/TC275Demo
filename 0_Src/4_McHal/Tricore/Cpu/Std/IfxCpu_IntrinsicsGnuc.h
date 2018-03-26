@@ -27,19 +27,10 @@
 #ifndef IFXCPU_INTRINSICSGNUC_H
 #define IFXCPU_INTRINSICSGNUC_H
 
-/* old style intrinsics handling for AGENtiX environment */
-#if defined(SCTB_EMBEDDED)
-# define IFXCPU_INTRINSICSGNUC_USE_MACHINE_INTRINSICS 0
-#else
-# define IFXCPU_INTRINSICSGNUC_USE_MACHINE_INTRINSICS 1
-#endif
-
 /******************************************************************************/
 #include "Ifx_Types.h"
 
-#if IFXCPU_INTRINSICSGNUC_USE_MACHINE_INTRINSICS
 #include "machine/intrinsics.h"
-#endif
 
 /******************************************************************************/
 /* *INDENT-OFF* */
@@ -421,12 +412,6 @@ IFX_INLINE sint32 __insn(sint32 trg, const sint32 trgbit, sint32 src, const sint
  * \{
  */
 
-#if !IFXCPU_INTRINSICSGNUC_USE_MACHINE_INTRINSICS
-/** Set CPU priority number [0..255] (or [0..1023] for TriCore 1.6.x) and enable interrupts immediately at function entry
- */
-#define __bisr(intlvl) __asm__ volatile ("bisr "#intlvl : : : "memory")
-#endif
-
 /** Disable interrupts. Only supported for TriCore1
  */
 #define __disable() __asm__ volatile ("disable" : : : "memory")
@@ -450,13 +435,6 @@ IFX_INLINE void __restore(sint32 ie)
 {
     __asm__ volatile ("restore %0"::"d"(ie));
 }
-
-#if !IFXCPU_INTRINSICSGNUC_USE_MACHINE_INTRINSICS
-/** Call a system call function number
- */
-#define __syscall(svcno) __tric_syscall(svcno)
-#define __tric_syscall(svcno) __asm__ volatile ("syscall "STRINGIFY(svcno) : : : "memory")
-#endif
 
 /** \} */
 
@@ -1219,19 +1197,6 @@ IFX_INLINE float __fabsf(float f)
     __asm__ volatile ("insert  %0,%1,0,31,1": "=d" (res) : "d" (f):"memory");
     return res;
 }
-
-#if !IFXCPU_INTRINSICSGNUC_USE_MACHINE_INTRINSICS
-/**  Move contents of the addressed core SFR into a data register
- */
-#define __mfcr(regaddr)  \
- ({ sint32 res; __asm__ volatile ("mfcr %0,%1": "=d" (res) :"i"(regaddr): "memory"); res; })
-
-//({ sint32 res; __asm__ volatile ("mfcr %0,"#regaddr : "=d" (res) : : "memory"); res; })
-
-/**  Move contents of a data register (second int) to the addressed core SFR (first int)
- */
-#define __mtcr(regaddr,val) __asm__ volatile ("mtcr %0,%1\n\tisync"::"i"(regaddr),"d"(val):"memory")
-#endif
 
 /**  Return parity
  */

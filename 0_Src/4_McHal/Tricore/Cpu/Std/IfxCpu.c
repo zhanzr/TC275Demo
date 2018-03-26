@@ -168,13 +168,6 @@ uint32 IfxCpu_getRandomValue(uint32 *seed)
     uint32 m = 0xfffffffb;  // 4294967291
     uint32 result;
 
-    //__asm(a,m,x,tmp1,tmp2              );
-    //EhEl = a * x;
-    //result = e14 %  m;
-    // %0 result
-    // %1 a
-    // %2 x
-    // %3 m
 /* *INDENT-OFF* */
 #ifdef __GNUC__
      __asm("      mul.u     %%e14,%1,%2       # d15 = Eh; d14 = El    \n"
@@ -188,33 +181,6 @@ uint32 IfxCpu_getRandomValue(uint32 *seed)
          "        loopu     cmp_m             #                       \n"
          " done:  mov       %0,%%d14          #                       \n"
          : "=d"(result) : "d"(a), "d"(x), "d"(m) : "d12","d13","d14","d15");
-#elif __TASKING__
-     __asm("      mul.u     e14,%1,%2      ; d15 = Eh; d14 = El    \n"
-         "        mov       d12,d14        ;   e12 = El            \n"
-         "        mov       d13,#0         ;                       \n"
-         "        madd.u    e14,e12,d15,#5 ; e14 = El + 5 * d15    \n"
-         " cmp_m: jge.u     d14,%3,sub_m   ;                       \n"
-         "        jz        d15,done       ;                       \n"
-         " sub_m: subx      d14,d14,%3     ;  e12=e12-m            \n"
-         "        subc      d15,d15,d13    ; d13=d13-0             \n"
-         "        loopu     cmp_m          ;                       \n"
-         " done:  mov       %0,d14         ;                       \n"
-         : "=d"(result) : "d"(a), "d"(x), "d"(m) : "e14","e12");
-#else
-     asm("        mul.u     %%e14,%1,%2       # d15 = Eh; d14 = El    \n"
-         "        mov       %%d12,%%d14       #   e12 = El            \n"
-         "        mov       %%d13, 0          #                       \n"
-         "        madd.u    %%e14,%%e12,%%d15, 5 # e14 = El + 5 * d15 \n"
-         " .cmp_m:                                                      \n"
-         "        jge.u     %%d14,%3,.sub_m                             \n"
-         "        jz        %%d15,.done        #                       \n"
-         " .sub_m:  \n"
-         "        subx      %%d14,%%d14,%3    #  e12=e12-m            \n"
-         "        subc      %%d15,%%d15,%%d13 # d13=d13-0             \n"
-         "        loopu     .cmp_m             #                       \n"
-         " .done:  \n"
-         "        mov       %0,%%d14          #                       \n"
-         : "=r"(result) : "r"(a), "r"(x), "r"(m));
 #endif
 /* *INDENT-ON* */
     * seed = result; // to simplify seed passing
@@ -262,107 +228,6 @@ void IfxCpu_resetSpinLock(IfxCpu_spinLock *lock)
 
 boolean IfxCpu_setCoreMode(Ifx_CPU *cpu, IfxCpu_CoreMode mode)
 {
-    // this switch is only temporary required
-    // once the IfxCan driver is generated via lldgen, we will vary the code without #ifdef
-#ifdef IFX_TC27x
-/* FIXME Copied from old TC27xA code, check that this is up to date code */
-    IfxCpu_CoreMode     cpuMode;
-    boolean             RetVal;
-    IfxScu_PMCSR_REQSLP modeSet;
-
-    RetVal  = TRUE;
-
-    modeSet = IfxScu_PMCSR_REQSLP_Idle;
-
-    /* Check the mode the CPU is in */
-    cpuMode = IfxCpu_getCoreMode(cpu);
-
-    /* if requested mode is same as current mode nothing to do */
-    if (cpuMode != mode)
-    {
-        /* transition from halt to Run */
-        if (IfxCpu_CoreMode_halt == cpuMode)
-        {
-            if (IfxCpu_CoreMode_run == mode)
-            {
-                Ifx_CPU_DBGSR dbgsr;
-
-                if (IfxCpu_getCoreIndex() != IfxCpu_getIndex(cpu))
-                {
-                    cpu->DBGSR.B.HALT = 0x2;
-                }
-                else
-                {
-                    dbgsr.U      = __mfcr(CPU_DBGSR);
-                    dbgsr.B.HALT = 0x2;
-                    __mtcr(CPU_DBGSR, dbgsr.U);
-                }
-            }
-            else                /* cannot go to any other mode e.g. IfxCpu_CoreMode_idle */
-            {
-                RetVal = FALSE;
-            }
-        }
-        /* From Run to Idle or vice versa */
-        else
-        {
-            if (IfxCpu_CoreMode_run == cpuMode)
-            {
-                if (IfxCpu_CoreMode_idle == mode)
-                {
-                    modeSet = IfxScu_PMCSR_REQSLP_Idle;
-                }
-                else
-                {
-                    RetVal = FALSE;
-                }
-            }
-            /* idle to Run */
-            else if (IfxCpu_CoreMode_idle == cpuMode)
-            {
-                if (IfxCpu_CoreMode_run == mode)
-                {
-                    modeSet = IfxScu_PMCSR_REQSLP_Run;
-                }
-                else
-                {
-                    RetVal = FALSE;
-                }
-            }
-            else
-            {
-                RetVal = FALSE;
-            }
-
-            if (TRUE == RetVal)
-            {
-                /* To take care of the Work Around in A step
-                 * In A Step the PMCSR is Cpu Endinit protected
-                 * in B step it is by safety endinit*/
-                uint16          password;
-                uint32          wdtCon0_Val;
-                Ifx_SCU_WDTCPU *watchdog;
-                watchdog = &MODULE_SCU.WDTCPU[IfxCpu_getCoreIndex()];    /* FIXME access to the watchdog of an other CPU, this might not work! */
-                password = IfxScuWdt_getCpuWatchdogPassword();
-                IfxScuWdt_clearCpuEndinit(password);
-                /*  password access   */
-                watchdog->CON0.U                                        = (password << 2U) | 0x1U;
-                /* modify access, E=0 */
-                watchdog->CON0.U                                        = (password << 2U) | 0x2U;
-                /* password access in advance */
-                watchdog->CON0.U                                        = (password << 2U) | 0x1U;
-                /* prepare write value */
-                wdtCon0_Val                                             = ((0x0000U) << 16U) | (password << 2U) | (0x3U);
-                MODULE_SCU.PMCSR[(uint32)IfxCpu_getIndex(cpu)].B.REQSLP = modeSet;
-                /* modify access, E=1, reload WDT */
-                watchdog->CON0.U                                        = wdtCon0_Val;
-                IfxScuWdt_setCpuEndinit(password);
-            }
-        }
-    }
-
-    return RetVal;
-#else
     uint8              reqslp;
     boolean            retValue;
     IfxCpu_ResourceCpu index = IfxCpu_getIndex(cpu);
@@ -397,7 +262,6 @@ boolean IfxCpu_setCoreMode(Ifx_CPU *cpu, IfxCpu_CoreMode mode)
     }
 
     return retValue;
-#endif
 }
 
 

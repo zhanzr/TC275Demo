@@ -24,7 +24,7 @@
 #include "Cpu/Std/Ifx_Types.h"
 #include "Compilers.h"
 
-#if defined(__GNUC__) && !defined(WIN32)
+#if defined(__GNUC__)
 /*!
  * \brief Data s C variables.
  */

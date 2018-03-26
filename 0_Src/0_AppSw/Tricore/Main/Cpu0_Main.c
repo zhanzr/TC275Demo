@@ -245,9 +245,6 @@ int core0_main (void)
     DtsBasicDemo_init();
 
     IfxCpu_enableInterrupts();
-
-	printf("3 Core Atomic Operation Demo %u Hz\n", SYSTEM_GetCpuClock());
-
 //    IfxCpuPerfCounterDemo_init();
 
 //	LCD_Initialize();
