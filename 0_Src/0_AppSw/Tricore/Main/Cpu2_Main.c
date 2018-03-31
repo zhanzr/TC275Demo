@@ -27,7 +27,7 @@
 #include "Scu/Std/IfxScuWdt.h"
 #include "Port\Std\IfxPort.h"
 #include "main.h"
-//#include "../Appli/BACK/demo_handler.h"
+#include "machine/circ.h"
 
 extern IfxCpu_mutexLock g_Asc0_Lock;
 
@@ -65,49 +65,71 @@ IFX_INLINE sint32 __muls(sint32 a, sint32 b)
     return res;
 }
 
+//This example shows how to create a buﬀer using circular addressing. The buﬀer buf contains
+//20 items which are controlled by ctrl . The buﬀer is initialised with the sequence 20, 19, 18,
+//... 2, 1. Afterwards the content of the buﬀer is read. Note that the variable i is never used
+//to address the current item in the ring buﬀer; this is all done by the hardware
+#define TEST_LEN	16
+#pragma section ".zdata"
+long buf[TEST_LEN] __attribute__ ((aligned(8)));
+#pragma section
 
 int core2_main (void)
 {
 	uint32_t tmpTick;
 
+	circ_t ctrl;
+	long ll;
+
     IfxCpu_enableInterrupts();
 
     IfxScuWdt_disableCpuWatchdog (IfxScuWdt_getCpuWatchdogPassword ());
 
-	printf("Saturate Airthmetic Operation Demo %u Hz\n", SYSTEM_GetCpuClock());
+	printf("Hardware Circular Buffer Operation Demo %u Hz\n", SYSTEM_GetCpuClock());
 
-    //Test Add
-    printf("\nTest Add\n");
-    {
-		int32_t t1 = INT32_MAX;
-		int32_t t2 = 3;
-		int32_t res_a = __add(t1, t2);
-		int32_t res_as = __adds(t1, t2);
-		printf("[ADD] %i + %i = %i\n", t1, t2, res_a);
-		printf("[ADDS] %i + %i = %i\n", t1, t2, res_as);
-    }
+	ctrl = init_circ_long(ctrl, buf, TEST_LEN*sizeof(long), 0);
 
-    //Test Sub
-    printf("\nTest Substract\n");
-    {
-		int32_t t1 = INT32_MIN;
-		int32_t t2 = 3;
-		int32_t res_s = __sub(t1, t2);
-		int32_t res_ss = __subs(t1, t2);
-		printf("[SUB] %i - %i = %i\n", t1, t2, res_s);
-		printf("[SUBS] %i - %i = %i\n", t1, t2, res_ss);
-    }
+	for (uint32_t i = 0; i < TEST_LEN; i++)
+	{
+		ctrl = put_circ_long(ctrl, TEST_LEN-i);
+	}
 
-    //Test Multiplication
-    printf("\nTest Multiplication\n");
-    {
-		int32_t t1 = INT32_MAX/2;
-		int32_t t2 = 3;
-		int32_t res_m = __mul(t1, t2);
-		int32_t res_ms = __muls(t1, t2);
-		printf("[MUL] %i * %i = %i\n", t1, t2, res_m);
-		printf("[MULS] %i * %i = %i\n", t1, t2, res_ms);
-    }
+	//Debug
+	for (uint32_t i = 0; i < TEST_LEN; i++)
+	{
+		ctrl = get_circ_long(ctrl, &ll);
+		//do something with ll
+		printf("%i, ", ll);
+	}
+	printf("\n");
+
+	for (uint32_t i = 0; i < TEST_LEN/2; i++)
+	{
+		ctrl = put_circ_long(ctrl, i+100);
+	}
+
+	//Debug
+	for (uint32_t i = 0; i < TEST_LEN; i++)
+	{
+		ctrl = get_circ_long(ctrl, &ll);
+		//do something with ll
+		printf("%i, ", ll);
+	}
+	printf("\n");
+
+	for (uint32_t i = 0; i < TEST_LEN/2; i++)
+	{
+		ctrl = put_circ_long(ctrl, i+200);
+	}
+
+	//Debug
+	for (uint32_t i = 0; i < TEST_LEN; i++)
+	{
+		ctrl = get_circ_long(ctrl, &ll);
+		//do something with ll
+		printf("%i, ", ll);
+	}
+	printf("\n");
 
     while (1)
     {
