@@ -201,3 +201,197 @@ void LCD_displayL(uint8_t l,uint8_t hori,uint8_t *s)
 		pos++;
 	}
 }
+
+
+void class0_tsr (int tin)
+{
+	switch (tin)
+	{
+	case 1:
+		// serve trap with TIN 1
+		break;
+	case 2:
+		// serve trap with TIN 2
+		break;
+	case 3:
+		// serve trap with TIN 3
+		break;
+
+	case 4:
+		//
+		break;
+	case 5:
+		// serve trap with TIN 2
+		break;
+	}
+
+	printf("%s:%i", __func__, tin);
+}
+
+void class1_tsr (int tin)
+{
+	switch (tin)
+	{
+	case 1:
+		// serve trap with TIN 1
+		break;
+	case 2:
+		// serve trap with TIN 2
+		break;
+	case 3:
+		// serve trap with TIN 3
+		break;
+
+	case 4:
+		//
+		break;
+	case 5:
+		// serve trap with TIN 2
+		break;
+	}
+
+	printf("%s:%i", __func__, tin);
+}
+
+void class2_tsr (int tin)
+{
+	switch (tin)
+	{
+	case 1:
+		// serve trap with TIN 1
+		break;
+	case 2:
+		// serve trap with TIN 2
+		break;
+	case 3:
+		// serve trap with TIN 3
+		break;
+
+	case 4:
+		//4 ALN Synch. HW Data Address Alignment.
+		break;
+	case 5:
+		// serve trap with TIN 2
+		break;
+	}
+
+	printf("%s:%i", __func__, tin);
+}
+
+void class3_tsr (int tin)
+{
+	switch (tin)
+	{
+	case 1:
+		// serve trap with TIN 1
+		break;
+	case 2:
+		// serve trap with TIN 2
+		break;
+	case 3:
+		// serve trap with TIN 3
+		break;
+
+	case 4:
+		//
+		break;
+	case 5:
+		// serve trap with TIN 2
+		break;
+	}
+
+	printf("%s:%i", __func__, tin);
+}
+
+void class4_tsr (int tin)
+{
+	switch (tin)
+	{
+	case 1:
+		// serve trap with TIN 1
+		break;
+	case 2:
+		// serve trap with TIN 2
+		break;
+	case 3:
+		// serve trap with TIN 3
+		break;
+	}
+
+	printf("%s:%i", __func__, tin);
+}
+
+void class5_tsr (int tin)
+{
+	switch (tin)
+	{
+	case 1:
+		// serve trap with TIN 1
+		break;
+	case 2:
+		// serve trap with TIN 2
+		break;
+	case 3:
+		// serve trap with TIN 3
+		break;
+
+	case 4:
+		//
+		break;
+	case 5:
+		// serve trap with TIN 2
+		break;
+	}
+
+	printf("%s:%i", __func__, tin);
+}
+
+void class6_tsr (int tin)
+{
+	switch (tin)
+	{
+	case 1:
+		// serve trap with TIN 1
+		break;
+	case 2:
+		// serve trap with TIN 2
+		break;
+	case 3:
+		// serve trap with TIN 3
+		break;
+
+	case 4:
+		//
+		break;
+	case 5:
+		// serve trap with TIN 2
+		break;
+	}
+
+	printf("%s:%i", __func__, tin);
+}
+
+void class7_tsr (int tin)
+{
+	switch (tin)
+	{
+	case 1:
+		// serve trap with TIN 1
+		break;
+	case 2:
+		// serve trap with TIN 2
+		break;
+	case 3:
+		// serve trap with TIN 3
+		break;
+
+	case 4:
+		//
+		break;
+	case 5:
+		// serve trap with TIN 2
+		break;
+	}
+
+	printf("%s:%i", __func__, tin);
+}

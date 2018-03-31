@@ -6,6 +6,7 @@
 #include "Port\Io\IfxPort_Io.h"
 #include "Cpu/Std/IfxCpu.h"
 #include "Cpu/CStart/IfxCpu_CStart.h"
+#include "Cpu/Trap/IfxCpu_Trap.h"
 
 // commands
 #define LCD_CLEARDISPLAY 0x01
@@ -50,3 +51,12 @@
 
 void LCD_Initialize (void);
 void LCD_displayL(uint8_t x,uint8_t y,uint8_t *s);
+
+void class0_tsr (int tin);
+void class1_tsr (int tin);
+void class2_tsr (int tin);
+void class3_tsr (int tin);
+void class4_tsr (int tin);
+void class5_tsr (int tin);
+void class6_tsr (int tin);
+void class7_tsr (int tin);

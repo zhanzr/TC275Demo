@@ -22,7 +22,6 @@
 
 #include "Configuration.h"
 
-//#include "Gtm/Tom/PwmHl/IfxGtm_Tom_PwmHl.h"
 #include "lcd2004.h"
 
 extern unsigned long SYSTEM_GetCpuClock(void);
@@ -47,7 +46,7 @@ volatile int32_t g_share_i32;
 uint32 volatile DelayLoopCounter;
 
 /* Image of a port pin state */
-static IfxAsclin_Asc asc;
+IfxAsclin_Asc asc;
 
 IfxCpu_mutexLock g_Asc0_Lock;
 
@@ -245,13 +244,28 @@ int core0_main (void)
     DtsBasicDemo_init();
 
     IfxCpu_enableInterrupts();
-//    IfxCpuPerfCounterDemo_init();
 
-//	LCD_Initialize();
-//	LCD_displayL(0,0,line[0]);
-//	LCD_displayL(1,0,line[1]);
-//	LCD_displayL(2,0,line[2]);
-//	LCD_displayL(3,0,line[3]);
+	_install_trap_handler (0, (void (*) (int)) class0_tsr);
+	_install_trap_handler (1, (void (*) (int)) class1_tsr);
+	_install_trap_handler (2, (void (*) (int)) class2_tsr);
+	_install_trap_handler (3, (void (*) (int)) class3_tsr);
+	_install_trap_handler (4, (void (*) (int)) class4_tsr);
+	_install_trap_handler (5, (void (*) (int)) class5_tsr);
+	_install_trap_handler (6, (void (*) (int)) class6_tsr);
+	_install_trap_handler (7, (void (*) (int)) class7_tsr);
+
+	//Test Divide by 0
+	printf("\nuint32_t test\n");
+	{
+		uint32_t a = 10;
+		uint32_t b = 0;
+		uint32_t c = a/b;
+		printf("%u / %u = %u\n", a, b, c);
+	}
+
+	//Test Syscall
+	_syscall(0);
+	_syscall(1);
 
     /* Endless loop */
     while (1)

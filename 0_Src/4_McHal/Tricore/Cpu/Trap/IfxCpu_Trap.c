@@ -33,7 +33,7 @@
 #include "IfxCpu_reg.h"
 #include "Ifx_Cfg.h"
 #ifdef IFX_CFG_EXTEND_TRAP_HOOKS
-#include "Ifx_Cfg_Trap.h"
+#include "McHalCfg/Ifx_Cfg_Trap.h"
 #endif
 
 /******************************************************************************/
@@ -54,15 +54,6 @@
 #ifndef IFX_CFG_CPU_TRAP_SYSCALL_CPU2_HOOK
 #   define IFX_CFG_CPU_TRAP_SYSCALL_CPU2_HOOK(trapWatch) /**< By default macro is empty*/
 #endif
-#ifndef IFX_CFG_CPU_TRAP_SYSCALL_CPU3_HOOK
-#   define IFX_CFG_CPU_TRAP_SYSCALL_CPU3_HOOK(trapWatch) /**< By default macro is empty*/
-#endif
-#ifndef IFX_CFG_CPU_TRAP_SYSCALL_CPU4_HOOK
-#   define IFX_CFG_CPU_TRAP_SYSCALL_CPU4_HOOK(trapWatch) /**< By default macro is empty*/
-#endif
-#ifndef IFX_CFG_CPU_TRAP_SYSCALL_CPU5_HOOK
-#   define IFX_CFG_CPU_TRAP_SYSCALL_CPU5_HOOK(trapWatch) /**< By default macro is empty*/
-#endif
 
 /*******************************************************************************
 **                      variables                                     **
@@ -81,7 +72,6 @@ IFX_INLINE IfxCpu_Trap IfxCpu_Trap_extractTrapInfo(uint8 trapClass, uint32 tin)
     trapInfo.tCpu   = IfxCpu_getCoreId();
     return trapInfo;
 }
-
 
 void IfxCpu_Trap_memoryManagementError(uint32 tin)
 {
@@ -160,31 +150,6 @@ void IfxCpu_Trap_systemCall_Cpu2(uint32 tin)
     __asm("rfe");
 }
 
-
-void IfxCpu_Trap_systemCall_Cpu3(uint32 tin)
-{
-    trapWatch = IfxCpu_Trap_extractTrapInfo(IfxCpu_Trap_Class_systemCall, tin);
-    IFX_CFG_CPU_TRAP_SYSCALL_CPU3_HOOK(trapWatch);
-    __asm("rfe");
-}
-
-
-void IfxCpu_Trap_systemCall_Cpu4(uint32 tin)
-{
-    trapWatch = IfxCpu_Trap_extractTrapInfo(IfxCpu_Trap_Class_systemCall, tin);
-    IFX_CFG_CPU_TRAP_SYSCALL_CPU4_HOOK(trapWatch);
-    __asm("rfe");
-}
-
-
-void IfxCpu_Trap_systemCall_Cpu5(uint32 tin)
-{
-    trapWatch = IfxCpu_Trap_extractTrapInfo(IfxCpu_Trap_Class_systemCall, tin);
-    IFX_CFG_CPU_TRAP_SYSCALL_CPU5_HOOK(trapWatch);
-    __asm("rfe");
-}
-
-
 void IfxCpu_Trap_nonMaskableInterrupt(uint32 tin)
 {
     trapWatch = IfxCpu_Trap_extractTrapInfo(IfxCpu_Trap_Class_nonMaskableInterrupt, tin);
@@ -250,69 +215,6 @@ void IfxCpu_Trap_vectorTable2(void)
     IfxCpu_Tsr_CallTSR(IfxCpu_Trap_systemCall_Cpu2);
     IfxCpu_Tsr_CallTSR(IfxCpu_Trap_nonMaskableInterrupt);
 }
-
-
-#endif
-
-#if IFXCPU_NUM_MODULES >= 4
-#if defined(__GNUC__)
-#pragma section
-#pragma section ".traptab_cpu3" awx
-#endif
-
-void IfxCpu_Trap_vectorTable3(void)
-{
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_memoryManagementError);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_internalProtectionError);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_instructionError);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_contextManagementError);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_busError);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_assertion);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_systemCall_Cpu3);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_nonMaskableInterrupt);
-}
-
-
-#endif
-
-#if IFXCPU_NUM_MODULES >= 5
-#if defined(__GNUC__)
-#pragma section
-#pragma section ".traptab_cpu4" awx
-#endif
-void IfxCpu_Trap_vectorTable4(void)
-{
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_memoryManagementError);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_internalProtectionError);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_instructionError);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_contextManagementError);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_busError);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_assertion);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_systemCall_Cpu4);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_nonMaskableInterrupt);
-}
-
-
-#endif
-
-#if IFXCPU_NUM_MODULES >= 6
-#if defined(__GNUC__)
-#pragma section
-#pragma section ".traptab_cpu5" awx
-#endif
-
-void IfxCpu_Trap_vectorTable5(void)
-{
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_memoryManagementError);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_internalProtectionError);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_instructionError);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_contextManagementError);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_busError);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_assertion);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_systemCall_Cpu5);
-    IfxCpu_Tsr_CallTSR(IfxCpu_Trap_nonMaskableInterrupt);
-}
-
 
 #endif
 

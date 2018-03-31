@@ -29,6 +29,8 @@
 #include <Dts/Dts/IfxDts_Dts.h>
 #include "main.h"
 
+#include "lcd2004.h"
+
 extern IfxCpu_mutexLock g_Asc0_Lock;
 
 extern volatile int32_t g_share_i32;
@@ -45,6 +47,24 @@ int core1_main (void)
      * Enable the watchdog in the demo if it is required and also service the watchdog periodically
      * */
     IfxScuWdt_disableCpuWatchdog (IfxScuWdt_getCpuWatchdogPassword ());
+
+	_install_trap_handler (0, (void (*) (int)) class0_tsr);
+	_install_trap_handler (1, (void (*) (int)) class1_tsr);
+	_install_trap_handler (2, (void (*) (int)) class2_tsr);
+	_install_trap_handler (3, (void (*) (int)) class3_tsr);
+	_install_trap_handler (4, (void (*) (int)) class4_tsr);
+	_install_trap_handler (5, (void (*) (int)) class5_tsr);
+	_install_trap_handler (6, (void (*) (int)) class6_tsr);
+	_install_trap_handler (7, (void (*) (int)) class7_tsr);
+
+//	//Test Unaligned access
+//	uint32_t testU32 = 0x11223344;
+//	printf("%04X\n", *(uint16_t*)(((uint8_t*)testU32)+1));
+
+	//Test Syscall
+	_syscall(2);
+	_syscall(3);
+
     while (1)
     {
 //        /* start Sensor */

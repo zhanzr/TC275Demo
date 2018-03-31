@@ -28,108 +28,36 @@
 #include "Port\Std\IfxPort.h"
 #include "main.h"
 #include "machine/circ.h"
+#include <machine/cint.h>
+
+#include "lcd2004.h"
 
 extern IfxCpu_mutexLock g_Asc0_Lock;
 
 extern volatile int32_t g_share_i32;
 
-IFX_INLINE sint32 __add(sint32 a, sint32 b)
-{
-    sint32 res;
-    __asm__ volatile ("add %0, %1, %2": "=d" (res) : "d" (a), "d" (b));
-    return res;
-}
-
-IFX_INLINE sint32 __sub(sint32 a, sint32 b)
-{
-    sint32 res;
-    __asm__ volatile ("sub %0, %1, %2": "=d" (res) : "d" (a), "d" (b));
-    return res;
-}
-
-/** multiplication signed without saturation
- */
-IFX_INLINE uint32 __mul(sint32 a, sint32 b)
-{
-    sint32 res;
-    __asm__ volatile ("mul %0, %1, %2": "=d" (res) : "d" (a), "d" (b));
-    return res;
-}
-
-/** multiplication signed with saturation
- */
-IFX_INLINE sint32 __muls(sint32 a, sint32 b)
-{
-	sint32 res;
-    __asm__ volatile ("muls %0, %1, %2": "=d" (res) : "d" (a), "d" (b));
-    return res;
-}
-
-//This example shows how to create a buﬀer using circular addressing. The buﬀer buf contains
-//20 items which are controlled by ctrl . The buﬀer is initialised with the sequence 20, 19, 18,
-//... 2, 1. Afterwards the content of the buﬀer is read. Note that the variable i is never used
-//to address the current item in the ring buﬀer; this is all done by the hardware
-#define TEST_LEN	16
-#pragma section ".zdata"
-long buf[TEST_LEN] __attribute__ ((aligned(8)));
-#pragma section
-
 int core2_main (void)
 {
 	uint32_t tmpTick;
-
-	circ_t ctrl;
-	long ll;
 
     IfxCpu_enableInterrupts();
 
     IfxScuWdt_disableCpuWatchdog (IfxScuWdt_getCpuWatchdogPassword ());
 
-	printf("Hardware Circular Buffer Operation Demo %u Hz\n", SYSTEM_GetCpuClock());
+	printf("Trap Demo %u Hz\n", SYSTEM_GetCpuClock());
 
-	ctrl = init_circ_long(ctrl, buf, TEST_LEN*sizeof(long), 0);
+	_install_trap_handler (0, (void (*) (int)) class0_tsr);
+	_install_trap_handler (1, (void (*) (int)) class1_tsr);
+	_install_trap_handler (2, (void (*) (int)) class2_tsr);
+	_install_trap_handler (3, (void (*) (int)) class3_tsr);
+	_install_trap_handler (4, (void (*) (int)) class4_tsr);
+	_install_trap_handler (5, (void (*) (int)) class5_tsr);
+	_install_trap_handler (6, (void (*) (int)) class6_tsr);
+	_install_trap_handler (7, (void (*) (int)) class7_tsr);
 
-	for (uint32_t i = 0; i < TEST_LEN; i++)
-	{
-		ctrl = put_circ_long(ctrl, TEST_LEN-i);
-	}
-
-	//Debug
-	for (uint32_t i = 0; i < TEST_LEN; i++)
-	{
-		ctrl = get_circ_long(ctrl, &ll);
-		//do something with ll
-		printf("%i, ", ll);
-	}
-	printf("\n");
-
-	for (uint32_t i = 0; i < TEST_LEN/2; i++)
-	{
-		ctrl = put_circ_long(ctrl, i+100);
-	}
-
-	//Debug
-	for (uint32_t i = 0; i < TEST_LEN; i++)
-	{
-		ctrl = get_circ_long(ctrl, &ll);
-		//do something with ll
-		printf("%i, ", ll);
-	}
-	printf("\n");
-
-	for (uint32_t i = 0; i < TEST_LEN/2; i++)
-	{
-		ctrl = put_circ_long(ctrl, i+200);
-	}
-
-	//Debug
-	for (uint32_t i = 0; i < TEST_LEN; i++)
-	{
-		ctrl = get_circ_long(ctrl, &ll);
-		//do something with ll
-		printf("%i, ", ll);
-	}
-	printf("\n");
+	//Test Syscall
+	_syscall(4);
+	_syscall(7);
 
     while (1)
     {

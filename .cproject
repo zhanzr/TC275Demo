@@ -36,6 +36,7 @@
 							<tool id="com.rt.hightec.buildsystem.tricore.new.assembler.gtm.1266700423" name="TriCore GTM Assembler" superClass="com.rt.hightec.buildsystem.tricore.new.assembler.gtm">
 								<option id="gtm.opion.include.path.1478918624" name="Include Paths" superClass="gtm.opion.include.path" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;../h&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/0_Src/0_AppSw/Tricore/McHalCfg}&quot;"/>
 								</option>
 								<inputType id="gtm.input.490980069" name="Assembler Input (mcs)" superClass="gtm.input"/>
 							</tool>
